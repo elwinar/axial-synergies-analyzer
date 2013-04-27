@@ -3,6 +3,9 @@
 
 #include "utils/point.h"
 
+/**
+ * Represent an oriented vector composed of two point in a three-dimensionnal space. The origin point is called proximal point, while the directionnal point is called distal.
+ */
 class Vector
 {
 public:

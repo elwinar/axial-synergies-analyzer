@@ -5,37 +5,37 @@
 
 Angle::Angle()
 {
-    Angle(Vector());
+    Angle(Vector(), Vector());
 }
 
-Angle::Angle(Vector first, Vector second)
+Angle::Angle(Vector fixed, Vector mobile)
 {
-    _first = first;
-    _second = second;
+    _fixed = fixed;
+    _mobile = mobile;
 }
 
 Angle::~Angle()
 {
 }
 
-Vector Angle::first() const
+Vector Angle::fixed() const
 {
-    return _first;
+    return _fixed;
 }
 
-void Angle::setFirst(Vector first)
+void Angle::setFixed(Vector fixed)
 {
-    _first = first;
+    _fixed = fixed;
 }
 
-Vector Angle::second() const
+Vector Angle::mobile() const
 {
-    return _second;
+    return _mobile;
 }
 
-void Angle::setSecond(Vector second)
+void Angle::setMobile(Vector mobile)
 {
-    _second = second;
+    _mobile = mobile;
 }
 
 double Angle::amplitude() const
@@ -44,9 +44,9 @@ double Angle::amplitude() const
      * the formula for the amplitude of an angle is given by Al-Kashi Theorem, aka Law of cosines
      * see http://en.wikipedia.org/wiki/Law_of_cosines
      */
-    double a = _first.length();
-    double b = _second.length();
-    double c = Vector(_first.distal(), _second.distal() - _second.proximal() + _first.proximal()).length();
+    double a = _fixed.length();
+    double b = _mobile.length();
+    double c = Vector(_fixed.distal(), _mobile.distal() - _mobile.proximal() + _fixed.proximal()).length();
     double amplitude = acos((pow(a,2) + pow(b,2) - pow(c,2)) / (2 * a * b));
     
     /*
