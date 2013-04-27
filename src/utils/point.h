@@ -1,6 +1,9 @@
 #ifndef POINT_H
 #define POINT_H
 
+/**
+ * Represent a position in a three-dimensionnal space.
+ */
 class Point
 {
 public:

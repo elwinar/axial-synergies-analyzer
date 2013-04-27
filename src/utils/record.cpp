@@ -4,6 +4,10 @@
 
 Record::Record()
 {
+    _markers.insert("O", generate(Point(0, 0, 0)));
+    _markers.insert("X", generate(Point(1, 0, 0)));
+    _markers.insert("Y", generate(Point(0, 1, 0)));
+    _markers.insert("Z", generate(Point(0, 0, 1)));
 }
 
 Record::~Record()
@@ -12,7 +16,7 @@ Record::~Record()
 
 Marker Record::marker(QString label) const
 {
-    Q_ASSERT(containsMarker(label));
+    Q_ASSERT(contains(label));
     return _markers.value(label);
 }
 
@@ -44,4 +48,14 @@ unsigned int Record::duration() const
 void Record::setDuration(unsigned int duration)
 {
     _duration = duration;
+}
+
+Marker Record::generate(Point point) const
+{
+    Marker marker;
+    for(unsigned int time; time <= duration; time++)
+    {
+        marker.setPoint(time, point);
+    }
+    return marker;
 }

@@ -3,24 +3,28 @@
 
 #include "utils/vector.h"
 
+/**
+ * Represent an angle composed of two vectors one reference segment (the fixed vector) and one variable segment (the mobile vector).
+ */
 class Angle
 {
 public:
     Angle();
-    Angle(Vector first, Vector second);
+    Angle(Vector fixed, Vector mobile);
+    
     ~Angle();
     
-    Vector first() const;
-    void setFirst(Vector first);
+    Vector fixed() const;
+    void setFixed(Vector first);
     
-    Vector second() const;
-    void setSecond(Vector second);
+    Vector mobile() const;
+    void setMobile(Vector second);
     
     double amplitude() const;
     
 private:
-    Vector _first;
-    Vector _second;
+    Vector _fixed;
+    Vector _mobile;
 };
 
 #endif // ANGLE_H

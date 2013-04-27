@@ -5,7 +5,7 @@
 #include <QTextStream>
 #include <QVector>
 
-Record Parser::parse(QFile* file)
+Record Parser::parse(QFile & file)
 {
     /*
      * open the file in read-only mode
@@ -13,8 +13,8 @@ Record Parser::parse(QFile* file)
      * create a buffer
      * create vars to fill
      */
-    file->open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream stream(file);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream stream(&file);
     QString buffer;
     Record record;
     QVector<QString> labels;
