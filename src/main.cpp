@@ -1,61 +1,52 @@
 #include <QApplication>
 #include <QDebug>
-#include <QList>
-#include <QMap>
 #include <QPen>
 #include <QString>
-#include <QStringList>
 #include <QTextStream>
 
-#include <algorithm>
-#include <cmath>
 #include "libs/qcustomplot.h"
 
 #include "tools/motiondetector.h"
 #include "tools/parser.h"
-#include "utils/angle.h"
-#include "utils/marker.h"
-#include "utils/point.h"
-#include "utils/record.h"
-#include "utils/vector.h"
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
     QTextStream out(stdout);
     
-    QFile fileQFile(app.arguments().at(1));
-    Record record = Parser::parse(file);
-    MotionDetector detector(record);
+    qDebug() << "Opening file" << app.arguments().at(1);
     
+    QFile file(app.arguments().at(1));
+    Record * record = Parser::parse(file);
+    
+    qDebug() << "Detecting motion";
+    
+    MotionDetector detector(record);
     detector.detect(QPair<QString, QString>("O", "Z"), QPair<QString, QString>("C7", "RTRO"));
-    MotionDetector::Instant peak = detector.peak();
-    MotionDetector::Instant begin = detector.begin();
-    MotionDetector::Instant end = detector.end();
-    /*
+    
+    qDebug() << "Motion detected";
+    
+    unsigned int begining = detector.begining();
+    unsigned int peak = detector.peak();
+    unsigned int end = detector.end();
+    QMap<unsigned int, double> amplitudes = detector.amplitudes();
+    QMap<unsigned int, double> speeds = detector.speeds();
     
     QCustomPlot* plot = new QCustomPlot;
+    
     plot->xAxis->setLabel("time");
-    plot->xAxis->setRange(1, record.duration());
+    plot->xAxis->setRange(1, record->duration());
     plot->yAxis->setLabel("amplitude");
     plot->yAxis->setRange(0, 180);
     plot->yAxis2->setLabel("speed");
     plot->yAxis2->setVisible(true);
-    plot->yAxis2->setRange(0, speeds.value(peak) * 1.1);
+    plot->yAxis2->setRange(0, speeds.value(peak));
     
     plot->addGraph(plot->xAxis, plot->yAxis);
     plot->graph(0)->setPen(QPen(Qt::red));
-    out << "data" << endl;
     for(QMap<unsigned int, double>::iterator i = amplitudes.begin(); i != amplitudes.end(); i++)
     {
-        out << i.key() << " " << i.value() << endl;
         plot->graph(0)->addData(i.key(), i.value());
-    }
-    
-    out << endl << "plot" << endl;
-    for(QCPDataMap::const_iterator i = plot->graph(0)->data()->begin(); i != plot->graph(0)->data()->end(); i++)
-    {
-        out << i->key << " " << i->value << endl;
     }
     
     plot->addGraph(plot->xAxis, plot->yAxis2);
@@ -78,30 +69,23 @@ int main(int argc, char* argv[])
     line = new QCPItemStraightLine(plot);
     line->setPen(QPen(Qt::gray));
     line->point1->setAxes(plot->xAxis, plot->yAxis2);
-    line->point1->setCoords(0, threshold);
+    line->point1->setCoords(begining, 0);
     line->point2->setAxes(plot->xAxis, plot->yAxis2);
-    line->point2->setCoords(1, threshold);
+    line->point2->setCoords(begining, 1);
     plot->addItem(line);
     
     line = new QCPItemStraightLine(plot);
     line->setPen(QPen(Qt::gray));
     line->point1->setAxes(plot->xAxis, plot->yAxis2);
-    line->point1->setCoords(start, 0);
+    line->point1->setCoords(end, 0);
     line->point2->setAxes(plot->xAxis, plot->yAxis2);
-    line->point2->setCoords(start, 1);
-    plot->addItem(line);
-    
-    line = new QCPItemStraightLine(plot);
-    line->setPen(QPen(Qt::gray));
-    line->point1->setAxes(plot->xAxis, plot->yAxis2);
-    line->point1->setCoords(stop, 0);
-    line->point2->setAxes(plot->xAxis, plot->yAxis2);
-    line->point2->setCoords(stop, 1);
+    line->point2->setCoords(end, 1);
     plot->addItem(line);
     
     plot->replot();
     plot->show();
-    */
+    
+    delete record;
     
     return app.exec();
 }

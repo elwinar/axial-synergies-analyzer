@@ -1,13 +1,11 @@
 #include "record.h"
 
 #include <QtGlobal>
+#include <QDebug>
 
 Record::Record()
 {
-    _markers.insert("O", generate(Point(0, 0, 0)));
-    _markers.insert("X", generate(Point(1, 0, 0)));
-    _markers.insert("Y", generate(Point(0, 1, 0)));
-    _markers.insert("Z", generate(Point(0, 0, 1)));
+    setDuration(0);
 }
 
 Record::~Record()
@@ -48,12 +46,21 @@ unsigned int Record::duration() const
 void Record::setDuration(unsigned int duration)
 {
     _duration = duration;
+    qDebug() << "[record] initializing axis O";
+    _markers.insert("O", generate(Point(0, 0, 0)));
+    qDebug() << "[record] initializing axis X";
+    _markers.insert("X", generate(Point(1, 0, 0)));
+    qDebug() << "[record] initializing axis Y";
+    _markers.insert("Y", generate(Point(0, 1, 0)));
+    qDebug() << "[record] initializing axis Z";
+    _markers.insert("Z", generate(Point(0, 0, 1)));
 }
 
 Marker Record::generate(Point point) const
 {
+    qDebug() << "[record] generating generic marker";
     Marker marker;
-    for(unsigned int time; time <= duration; time++)
+    for(unsigned int time = 1; time <= duration(); time++)
     {
         marker.setPoint(time, point);
     }
