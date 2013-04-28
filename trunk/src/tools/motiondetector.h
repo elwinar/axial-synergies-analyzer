@@ -13,17 +13,7 @@ class MotionDetector
 {
 public:
     
-    MotionDetector(Record const & record);
-    
-    /**
-     * Holds the data associated with an angle at a particular instant.
-     */
-    struct Instant
-    {
-        int time;
-        double speed;
-        double amplitude;
-    };
+    MotionDetector(Record const * record);
     
     /**
      * Run the detection providing marker labels for the fixed and mobile segments of the record.
@@ -37,9 +27,12 @@ public:
      */
     bool detected() const;
     
-    Instant begin() const;
-    Instant peak() const;
-    Instant end() const;
+    unsigned int begining() const;
+    unsigned int peak() const;
+    unsigned int end() const;
+    
+    QMap<unsigned int, double> amplitudes() const;
+    QMap<unsigned int, double> speeds() const;
     
     /**
      * The factor used to compute the velocity threshold.
@@ -49,11 +42,16 @@ public:
 protected:
     
 private:
-    Record const & _record;
+    Record const * _record;
+    
+    QMap<unsigned int, double> _amplitudes;
+    QMap<unsigned int, double> _speeds;
+    
     bool _detected;
-    Instant _begin;
-    Instant _peak;
-    Instant _end;
+    
+    unsigned int _begining;
+    unsigned int _peak;
+    unsigned int _end;
 };
 
 #endif // MOTION_DETECTOR_H

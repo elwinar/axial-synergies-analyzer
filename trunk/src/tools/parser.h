@@ -10,7 +10,7 @@
 class Parser
 {
 public:
-    static Record parse(QFile & file);
+    static Record * parse(QFile & file);
 };
 
 #endif // PARSER_H
