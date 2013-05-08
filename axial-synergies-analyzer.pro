@@ -9,10 +9,10 @@ DESTDIR = bin
 OBJECTS_DIR = obj
 MOC_DIR = moc
 
-DEPENDPATH += src src/libs src/tools src/utils
-INCLUDEPATH += src src/tools src/utils
-
-# Input
+DEPENDPATH  += src src/libs src/tools src/utils src/widgets
+INCLUDEPATH += src src/libs src/tools src/utils src/widgets
+        
+# Input 
 HEADERS += src/libs/qcustomplot.h \
            src/tools/motiondetector.h \
            src/tools/parser.h \
@@ -21,7 +21,10 @@ HEADERS += src/libs/qcustomplot.h \
            src/utils/pi.h \
            src/utils/point.h \
            src/utils/record.h \
-           src/utils/vector.h
+           src/utils/vector.h \
+           src/widgets/mainwindow.h \
+           src/widgets/motiondetectorwidget.h \
+           src/widgets/recordwidget.h
 SOURCES += src/main.cpp \
            src/libs/qcustomplot.cpp \
            src/tools/motiondetector.cpp \
@@ -30,4 +33,7 @@ SOURCES += src/main.cpp \
            src/utils/marker.cpp \
            src/utils/point.cpp \
            src/utils/record.cpp \
-           src/utils/vector.cpp
+           src/utils/vector.cpp \
+           src/widgets/mainwindow.cpp \
+           src/widgets/motiondetectorwidget.cpp \
+           src/widgets/recordwidget.cpp 

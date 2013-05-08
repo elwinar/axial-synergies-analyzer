@@ -1,6 +1,7 @@
 #include "motiondetector.h"
 
 #include <QtGlobal>
+#include <QtDebug>
 
 #include "utils/angle.h"
 #include "utils/point.h"
@@ -17,6 +18,7 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
     /**
      * Clean eventually existing data
      */
+    qDebug() << "[detector] cleaning previous data";
     _amplitudes.clear();
     _speeds.clear();
     _detected = false;
@@ -25,6 +27,7 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
      * Retrieve the markers
      * TODO Check if there is an unknown marker
      */
+    qDebug() << "[detector] retrieving new data";
     Marker fixedProximal = _record->marker(fixed.first);
     Marker fixedDistal = _record->marker(fixed.second);
     Marker mobileProximal = _record->marker(mobile.first);
@@ -33,6 +36,7 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
     /**
      * Compute amplitudes of the angle at every recorded frame
      */
+    qDebug() << "[detector] computing amplitudes";
     for(unsigned int time = 1; time < _record->duration(); time++)
     {
         if(fixedProximal.exists(time) && fixedDistal.exists(time) && mobileProximal.exists(time) && mobileDistal.exists(time))
@@ -44,8 +48,9 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
     /**
      * Compute angular speeds at every recorded frame, and remember peak time
      */
+    qDebug() << "[detector] computing angular speed";
     _speeds.insert(1, 0);
-    unsigned int _peak = 1;
+    _peak = 1;
     for(unsigned int time = 2; time < _record->duration(); time++)
     {
         if(!_amplitudes.contains(time))
@@ -70,12 +75,14 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
     /**
      * Motion is delimited by a threshold proportionnal to peak velocity
      */
+    qDebug() << "[detector] computing speed threshold";
     double threshold = _speeds.value(_peak) * VELOCITY_THRESHOLD_FACTOR;
     
     /**
-     * Begining of motion is computed from peak time and backtracking
+     * Begining of motion is computed from peak time and backward-tracking
      */
-    unsigned int _begining = 0;
+    qDebug() << "[detector] finding begining";
+    _begining = 0;
     for(unsigned int time = _peak; time >= 1; time--)
     {
         if(_speeds.contains(time) && _speeds.value(time) < threshold)
@@ -86,9 +93,10 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
     }
     
     /**
-     * End of the motion is computed from peak time and forwarding
+     * End of the motion is computed from peak time and forward-tracking
      */
-    unsigned int _end = 0;
+    qDebug() << "[detector] finding end";
+    _end = 0;
     for(unsigned int time = _peak; time <= _record->duration(); time++)
     {
         if(_speeds.contains(time) && _speeds.value(time) < threshold)

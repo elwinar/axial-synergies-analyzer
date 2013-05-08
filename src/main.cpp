@@ -6,25 +6,24 @@
 
 #include "libs/qcustomplot.h"
 
+#include "widgets/mainwindow.h"
+
 #include "tools/motiondetector.h"
 #include "tools/parser.h"
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
-    QTextStream out(stdout);
+    QCoreApplication::setApplicationName("axial-synergies-analyzer");
     
-    qDebug() << "Opening file" << app.arguments().at(1);
+    /*
+    QTextStream out(stdout);
     
     QFile file(app.arguments().at(1));
     Record * record = Parser::parse(file);
     
-    qDebug() << "Detecting motion";
-    
     MotionDetector detector(record);
     detector.detect(QPair<QString, QString>("O", "Z"), QPair<QString, QString>("C7", "RTRO"));
-    
-    qDebug() << "Motion detected";
     
     unsigned int begining = detector.begining();
     unsigned int peak = detector.peak();
@@ -86,6 +85,10 @@ int main(int argc, char* argv[])
     plot->show();
     
     delete record;
+    */
+    
+    MainWindow w;
+    w.show();
     
     return app.exec();
 }

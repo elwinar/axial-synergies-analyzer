@@ -13,6 +13,9 @@ class MotionDetector
 {
 public:
     
+    /**
+     * Create a motion detector for the given record
+     */
     MotionDetector(Record const * record);
     
     /**
@@ -38,8 +41,6 @@ public:
      * The factor used to compute the velocity threshold.
      */
     static double const VELOCITY_THRESHOLD_FACTOR = 0.05;
-
-protected:
     
 private:
     Record const * _record;
