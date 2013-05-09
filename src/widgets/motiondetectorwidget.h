@@ -1,7 +1,10 @@
 #ifndef MOTION_DETECTOR_WIDGET_H
 #define MOTION_DETECTOR_WIDGET_H
 
+#include <QMap>
+#include <QPen>
 #include <QWidget>
+#include "libs/qcustomplot.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -33,6 +36,8 @@ public slots:
      * Clear the selectors content
      */
     void clearComboBoxes();
+    
+    void drawGraph(QMap<unsigned int, double> data, QPen pen, QCPAxis * xAxis, QCPAxis * yAxis, QString name);
     
     /**
      * Draw the widget's plot according to the detector's state

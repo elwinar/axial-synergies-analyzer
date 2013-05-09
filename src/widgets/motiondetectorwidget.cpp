@@ -90,6 +90,25 @@ void MotionDetectorWidget::drawEndLine(int position)
     _plot->replot();
 }
 
+void MotionDetectorWidget::drawGraph(QMap<unsigned int, double> data, QPen pen, QCPAxis * xAxis, QCPAxis * yAxis, QString name)
+{
+    unsigned int o = data.begin().key() - 1;
+    QCPGraph * graph = _plot->addGraph(xAxis, yAxis);
+    graph->setPen(pen);
+    graph->setName(name);
+    for(QMap<unsigned int, double>::iterator i = data.begin(); i != data.end(); i++)
+    {
+        if(i.key() != o + 1)
+        {
+            graph = _plot->addGraph(xAxis, yAxis);
+            graph->removeFromLegend();
+            graph->setPen(pen);
+        }
+        graph->addData(i.key(), i.value());
+        o = i.key();
+    }
+}
+
 void MotionDetectorWidget::drawPlot()
 {
     setupPlot();
@@ -103,21 +122,8 @@ void MotionDetectorWidget::drawPlot()
     _plot->yAxis2->setRange(0, speeds.value(_detector->peak()) * 1.05);
     _plot->legend->setVisible(true);
     
-    _plot->addGraph(_plot->xAxis, _plot->yAxis);
-    _plot->graph(0)->setPen(QPen(Qt::red));
-    for(QMap<unsigned int, double>::iterator i = amplitudes.begin(); i != amplitudes.end(); i++)
-    {
-        _plot->graph(0)->addData(i.key(), i.value());
-    }
-    _plot->graph(0)->setName(tr("Amplitudes"));
-    
-    _plot->addGraph(_plot->xAxis, _plot->yAxis2);
-    _plot->graph(1)->setPen(QPen(Qt::blue));
-    for(QMap<unsigned int, double>::iterator i = speeds.begin(); i != speeds.end(); i++)
-    {
-        _plot->graph(1)->addData(i.key(), i.value());
-    }
-    _plot->graph(1)->setName(tr("Speeds"));
+    drawGraph(amplitudes, QPen(Qt::red), _plot->xAxis, _plot->yAxis, tr("Amplitudes"));
+    drawGraph(speeds, QPen(Qt::blue), _plot->xAxis, _plot->yAxis2, tr("Speeds"));
     
     _plot->replot();
 }
@@ -137,6 +143,8 @@ void MotionDetectorWidget::initializeLayout()
     fixedAngleLayout->addWidget(_proximalFixedComboBox);
     fixedAngleLayout->addWidget(_distalFixedComboBox);
     comboBoxesLayout->addLayout(fixedAngleLayout);
+    QObject::connect(_proximalFixedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
+    QObject::connect(_distalFixedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
     
     QHBoxLayout * mobileAngleLayout = new QHBoxLayout();
     QLabel * mobileLabel = new QLabel(tr("Mobile angle"));
@@ -146,11 +154,13 @@ void MotionDetectorWidget::initializeLayout()
     mobileAngleLayout->addWidget(_proximalMobileComboBox);
     mobileAngleLayout->addWidget(_distalMobileComboBox);
     comboBoxesLayout->addLayout(mobileAngleLayout);
+    QObject::connect(_proximalMobileComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
+    QObject::connect(_distalMobileComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
     
     layout->addLayout(comboBoxesLayout);
     
     QPushButton * runButton = new QPushButton(tr("Run"));
-    layout->addWidget(runButton);
+    //layout->addWidget(runButton);
     QObject::connect(runButton, SIGNAL(clicked()), this, SLOT(run()));
     
     _plot = new QCustomPlot();
@@ -187,6 +197,15 @@ void MotionDetectorWidget::run()
 {
     if(_record != 0)
     {
+        // FIXME pseudo try-catch minable pour palier à un problème momentanné dû à une conception à l'arrache
+        if(_proximalFixedComboBox->currentIndex() == -1 ||
+            _distalFixedComboBox->currentIndex() == -1 ||
+            _proximalMobileComboBox->currentIndex() == -1 ||
+            _distalMobileComboBox->currentIndex() == -1 )
+        {
+            return;
+        }
+        
         _detector->detect(QPair<QString, QString>(_proximalFixedComboBox->currentText(), _distalFixedComboBox->currentText()), QPair<QString, QString>(_proximalMobileComboBox->currentText(), _distalMobileComboBox->currentText()));
         
         emit detected();
@@ -240,6 +259,7 @@ void MotionDetectorWidget::setRecord(Record * record)
         setupPlot();
         setupSpinBoxes();
         setDisabled(false);
+        run();
     }
     
     emit recordChanged(record);
