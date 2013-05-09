@@ -5,12 +5,29 @@
 
 #include "utils/angle.h"
 #include "utils/point.h"
+#include "utils/record.h"
 #include "utils/vector.h"
 
 MotionDetector::MotionDetector(Record const * record)
 {
     _record = record;
     _detected = false;
+}
+
+MotionDetector::~MotionDetector()
+{
+}
+
+QMap<unsigned int, double> MotionDetector::amplitudes() const
+{
+    Q_ASSERT(detected() == true);
+    return _amplitudes;
+}
+
+unsigned int MotionDetector::begining() const
+{
+    Q_ASSERT(detected() == true);
+    return _begining;
 }
 
 bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
@@ -116,28 +133,16 @@ bool MotionDetector::detected() const
     return _detected;
 }
 
-unsigned int MotionDetector::begining() const
-{
-    Q_ASSERT(detected() == true);
-    return _begining;
-}
-
-unsigned int MotionDetector::peak() const
-{
-    Q_ASSERT(detected() == true);
-    return _peak;
-}
-
 unsigned int MotionDetector::end() const
 {
     Q_ASSERT(detected() == true);
     return _end;
 }
 
-QMap<unsigned int, double> MotionDetector::amplitudes() const
+unsigned int MotionDetector::peak() const
 {
     Q_ASSERT(detected() == true);
-    return _amplitudes;
+    return _peak;
 }
 
 QMap<unsigned int, double> MotionDetector::speeds() const

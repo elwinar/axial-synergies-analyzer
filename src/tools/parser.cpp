@@ -1,12 +1,15 @@
 #include "parser.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QString>
 #include <QStringList>
 #include <QTextStream>
 #include <QVector>
 
-Record * Parser::parse(QFile & file)
+#include "utils/record.h"
+
+Record * Parser::parse(QFile * file)
 {
     /*
      * open the file in read-only mode
@@ -14,28 +17,21 @@ Record * Parser::parse(QFile & file)
      * create a buffer
      * create vars to fill
      */
-    qDebug() << "[parser] opening file";
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    qDebug() << "[parser] initialization";
-    QTextStream stream(&file);
-    qDebug() << "[parser] creating reading buffer";
+    file->open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream stream(file);
     QString buffer;
-    qDebug() << "[parser] creating new record";
     Record * record = new Record();
-    qDebug() << "[parser] creating containers";
     QVector<QString> labels;
     QVector<Marker> markers;
     
     /*
      * skip the filename
      */
-    qDebug() << "[parser] skiping filename";
     stream.readLine();
     
     /*
      * read each line while not meeting the label TRAJECTORIES to skip metadata
      */
-    qDebug() << "[parser] skiping metadatas";
     do
     {
         buffer = stream.readLine();
@@ -44,7 +40,6 @@ Record * Parser::parse(QFile & file)
     /*
      * skip the frequency of capture
      */
-    qDebug() << "[parser] skiping frequency";
     stream.readLine();
     
     /*
@@ -55,7 +50,6 @@ Record * Parser::parse(QFile & file)
      *   compute next label end position
      *   add it to labels' list
      */
-    qDebug() << "[parser] reading labels";
     buffer = stream.readLine();
     int start = 0;
     int end = 0;
@@ -69,7 +63,6 @@ Record * Parser::parse(QFile & file)
     /*
      * skip the fields details
      */
-    qDebug() << "[parser] skiping fields";
     stream.readLine();
     
     /*
@@ -83,7 +76,6 @@ Record * Parser::parse(QFile & file)
      *       add the new point to the marker
      *   read next line
      */
-    qDebug() << "[parser] reading datas";
     markers.resize(labels.size());
     unsigned int time = 0;
     buffer = stream.readLine();
@@ -104,14 +96,12 @@ Record * Parser::parse(QFile & file)
     /*
      * set the duration of the record
      */
-    qDebug() << "[parser] setting up duration";
     record->setDuration(time);
     
     /*
      * foreach marker
      *   add the marker to the record
      */
-    qDebug() << "[parser] filling record object";
     for(int i = 0; i < markers.size(); i++)
     {
 	record->setMarker(labels[i], markers[i]);

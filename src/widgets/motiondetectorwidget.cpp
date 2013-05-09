@@ -1,7 +1,16 @@
 #include "motiondetectorwidget.h"
 
-MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
+#include <QComboBox>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+
+#include "libs/qcustomplot.h"
+#include "utils/record.h"
+
+MotionDetectorWidget::MotionDetectorWidget(QWidget * parent, Record * record): QWidget(parent)
 {
+    _record = record;
     _layout = new QGridLayout();
     setLayout(_layout);
     initializeButtons();
@@ -20,6 +29,12 @@ void MotionDetectorWidget::initializeButtons()
     
     _saveButton = new QPushButton(tr("Save"));
     _layout->addWidget(_saveButton, 0, 1);
+}
+
+void MotionDetectorWidget::initializePlot()
+{
+    _plot = new QCustomPlot();
+    _layout->addWidget(_plot, 3, 0, 5, 5);
 }
 
 void MotionDetectorWidget::initializeSelectors()
@@ -43,8 +58,8 @@ void MotionDetectorWidget::initializeSelectors()
     _layout->addWidget(_distalMobileComboBox, 2, 2);
 }
 
-void MotionDetectorWidget::initializePlot()
+void MotionDetectorWidget::setRecord(Record * record)
 {
-    _plot = new QCustomPlot();
-    _layout->addWidget(_plot, 3, 0, 5, 5);
+    _record = record;
+    emit recordChanged(record);
 }

@@ -9,18 +9,40 @@
 class Angle
 {
 public:
-    Angle();
-    Angle(Vector fixed, Vector mobile);
+    /**
+     * Create an angle with the given fixed vector as reference vector and the given mobile vector as branch vector
+     */
+    Angle(Vector fixed = Vector(), Vector mobile = Vector());
     
+    /**
+     * Destroy the angle
+     */
     ~Angle();
     
+    /**
+     * The amplitude of the angle, in degrees
+     */
+    double amplitude() const;
+    
+    /**
+     * The fixed vector of the angle
+     */
     Vector fixed() const;
+    
+    /**
+     * The mobile vector of the angle
+     */
+    Vector mobile() const;
+    
+    /**
+     * Set the fixed vector of the angle
+     */
     void setFixed(Vector first);
     
-    Vector mobile() const;
+    /**
+     * Set the mobile vector of the angle
+     */
     void setMobile(Vector second);
-    
-    double amplitude() const;
     
 private:
     Vector _fixed;

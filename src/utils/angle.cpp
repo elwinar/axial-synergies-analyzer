@@ -3,11 +3,6 @@
 #include <cmath>
 #include "utils/pi.h"
 
-Angle::Angle()
-{
-    Angle(Vector(), Vector());
-}
-
 Angle::Angle(Vector fixed, Vector mobile)
 {
     _fixed = fixed;
@@ -16,26 +11,6 @@ Angle::Angle(Vector fixed, Vector mobile)
 
 Angle::~Angle()
 {
-}
-
-Vector Angle::fixed() const
-{
-    return _fixed;
-}
-
-void Angle::setFixed(Vector fixed)
-{
-    _fixed = fixed;
-}
-
-Vector Angle::mobile() const
-{
-    return _mobile;
-}
-
-void Angle::setMobile(Vector mobile)
-{
-    _mobile = mobile;
 }
 
 double Angle::amplitude() const
@@ -53,4 +28,24 @@ double Angle::amplitude() const
      * convert the amplitude from radians to degrees and return it
      */
     return amplitude / PI * 180;
+}
+
+Vector Angle::fixed() const
+{
+    return _fixed;
+}
+
+Vector Angle::mobile() const
+{
+    return _mobile;
+}
+
+void Angle::setFixed(Vector fixed)
+{
+    _fixed = fixed;
+}
+
+void Angle::setMobile(Vector mobile)
+{
+    _mobile = mobile;
 }

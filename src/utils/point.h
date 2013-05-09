@@ -7,20 +7,54 @@
 class Point
 {
 public:
-    Point();
-    Point(double x, double y, double z);
+    /**
+     * Create a point with given x, y and z coordinates
+     */
+    Point(double x = 0, double y = 0, double z = 0);
+    
+    /**
+     * Destroy the point
+     */
     ~Point();
     
-    double x() const;
+    /**
+     * Set the x component of the point
+     */
     void setX(double x);
     
-    double y() const;
+    /**
+     * Set the y component of the point
+     */
     void setY(double y);
     
-    double z() const;
+    /**
+     * Set the z component of the point
+     */
     void setZ(double z);
     
+    /**
+     * The x component of the point
+     */
+    double x() const;
+    
+    /**
+     * The y component of the point
+     */
+    double y() const;
+    
+    /**
+     * The z component of the point
+     */
+    double z() const;
+    
+    /**
+     * Operator to add a point to another
+     */
     Point operator+(Point const & operand) const;
+    
+    /**
+     * Operator to subtract a point to another
+     */
     Point operator-(Point const & operand) const;
     
 private:

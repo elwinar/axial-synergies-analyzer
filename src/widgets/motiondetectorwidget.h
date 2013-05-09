@@ -1,41 +1,69 @@
 #ifndef MOTION_DETECTOR_WIDGET_H
 #define MOTION_DETECTOR_WIDGET_H
 
-#include <QPushButton>
-#include <QComboBox>
-#include <QGridLayout>
-#include <QLabel>
 #include <QWidget>
 
-#include "libs/qcustomplot.h"
+#include "tools/motiondetector.h"
+
+class QComboBox;
+class QCustomPlot;
+class QGridLayout;
+class QLabel;
+class QPushButton;
+class Record;
 
 class MotionDetectorWidget : public QWidget
 {
     Q_OBJECT
     
 public:
-    MotionDetectorWidget(QWidget * parent = 0);
+    /**
+     * Create a motion detector widget
+     */
+    MotionDetectorWidget(QWidget * parent = 0, Record * record = 0);
     ~MotionDetectorWidget();
     
 protected:
-    void initializeSelectors();
+    /**
+     * Initialize the widget's buttons
+     */
     void initializeButtons();
+    
+    /**
+     * Initialize the widget's plot
+     */
     void initializePlot();
     
-private:
-    QGridLayout * _layout;
+    /**
+     * Initialize the widget's selectors
+     */
+    void initializeSelectors();
     
+public slots:
+    /**
+     * Update the record pointer of the widget
+     */
+    void setRecord(Record * record);
+
+signals:
+    /**
+     * Emitted whenever the record pointer of the widget change
+     */
+    void recordChanged(Record * record);
+    
+private:
+    MotionDetector detector;
+    QComboBox * _distalFixedComboBox;
+    QComboBox * _distalMobileComboBox;
+    QLabel * _fixedLabel;
+    QGridLayout * _layout;
+    QLabel * _mobileLabel;
+    QCustomPlot * _plot;
+    QComboBox * _proximalFixedComboBox;
+    QComboBox * _proximalMobileComboBox;
+    Record * _record;
     QPushButton * _runButton;
     QPushButton * _saveButton;
-    
-    QLabel * _fixedLabel;
-    QLabel * _mobileLabel;
-    QComboBox * _proximalFixedComboBox;
-    QComboBox * _distalFixedComboBox;
-    QComboBox * _proximalMobileComboBox;
-    QComboBox * _distalMobileComboBox;
-    
-    QCustomPlot * _plot;
 };
 
 #endif // MOTION_DETECTOR_WIDGET_H
