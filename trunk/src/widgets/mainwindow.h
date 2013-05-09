@@ -1,50 +1,73 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QAction>
-#include <QFile>
-#include <QGridLayout>
 #include <QMainWindow>
-#include <QMenu>
 #include <QSettings>
+#include <QString>
 
-#include "utils/record.h"
-#include "widgets/recordwidget.h"
+class QAction;
+class QMenu;
+class Record;
+class RecordWidget;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
     
 public:
+    /**
+     * Create a main window for the application
+     */
     MainWindow(QWidget * parent = 0);
     ~MainWindow();
     
-    
 protected:
-    void loadSettings();
-    void saveSettings();
-    void initializeMenu();
+    /**
+     * Initialize the window's central widget
+     */
     void initializeCentralWidget();
     
-private:
-    QSettings _settings;
+    /**
+     * Initialize the window's menu and actions
+     */
+    void initializeMenu();
     
-    QMenu * _fileMenu;
-    QMenu * _aboutMenu;
+    /**
+     * Load the settings of the application from configuration file
+     */
+    void loadSettings();
     
-    QAction * _openAction;
-    QAction * _quitAction;
-    QAction * _aboutQtAction;
-    
-    Record * _record;
-    RecordWidget * _recordWidget;
+    /**
+     * Save the settings of the application into the configuration file
+     */
+    void saveSettings();
     
 public slots:
+    /**
+     * Load a record from a file
+     */
     void load(QString filename);
+    
+    /**
+     * Open a file dialog to let the user choose a file to open
+     */
     void open();
     
 signals:
+    /**
+     * Emitted when a record is loaded
+     */
     void loaded(Record * record);
+    
+private:
+    QAction * _aboutQtAction;
+    QMenu * _aboutMenu;
+    QMenu * _fileMenu;
+    QAction * _openAction;
+    QAction * _quitAction;
+    Record * _record;
+    RecordWidget * _recordWidget;
+    QSettings _settings;
 };
 
 #endif // MAIN_WINDOW_H

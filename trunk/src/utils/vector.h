@@ -9,22 +9,54 @@
 class Vector
 {
 public:
+    /**
+     * Create a null vector
+     */
     Vector();
+    
+    /**
+     * Create a direction vector pointing to the given point
+     */
     Vector(Point distal);
+    
+    /**
+     * Create a vector starting on the diven proximal point and pointing to the given distal point
+     */
     Vector(Point proximal, Point distal);
+    
+    /**
+     * Destroy the vector
+     */
     ~Vector();
     
-    Point proximal() const;
-    void setProximal(Point proximal);
-    
+    /**
+     * The directionnal point of the vector
+     */
     Point distal() const;
-    void setDistal(Point distal);
     
+    /**
+     * The length of the vector
+     */
     double length() const;
     
+    /**
+     * The origin point of the vector
+     */
+    Point proximal() const;
+    
+    /**
+     * Set the directionnal point of the vector
+     */
+    void setDistal(Point distal);
+    
+    /**
+     * Set the origin point of the vector
+     */
+    void setProximal(Point proximal);
+    
 private:
-    Point _proximal;
     Point _distal;
+    Point _proximal;
 };
 
 #endif // VECTOR_H

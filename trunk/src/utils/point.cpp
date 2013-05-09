@@ -1,10 +1,5 @@
 #include "point.h"
 
-Point::Point()
-{
-    Point(0,0,0);
-}
-
 Point::Point(double x, double y, double z)
 {
     _x = x;
@@ -21,24 +16,24 @@ double Point::x() const
     return _x;
 }
 
-void Point::setX(double x)
-{
-    _x = x;
-}
-
 double Point::y() const
 {
     return _y;
 }
 
-void Point::setY(double y)
-{
-    _y = y;
-}
-
 double Point::z() const
 {
     return _z;
+}
+
+void Point::setX(double x)
+{
+    _x = x;
+}
+
+void Point::setY(double y)
+{
+    _y = y;
 }
 
 void Point::setZ(double z)

@@ -1,18 +1,20 @@
 #include "mainwindow.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QMenu>
 #include <QMenuBar>
 #include <QStyle>
 
 #include "tools/parser.h"
+#include "utils/record.h"
+#include "widgets/recordwidget.h"
 
-/**
- * Create a main window for the application
- */
 MainWindow::MainWindow(QWidget * parent): QMainWindow(parent), _settings(QApplication::applicationFilePath().append(".ini"), QSettings::IniFormat)
 {
     _record = 0;
@@ -30,31 +32,14 @@ MainWindow::~MainWindow()
     saveSettings();
 }
 
-/**
- * Load the settings of the application from configuration file
- */
-void MainWindow::loadSettings()
+void MainWindow::initializeCentralWidget()
 {
-    qDebug() << "[mainwindow] loading settings from" << _settings.fileName();
+    qDebug() << "[mainwindow] initializing central widget";
     
-    resize(_settings.value("window/size", QSize(400, 400)).toSize());
-    move(_settings.value("window/position", QPoint(200, 200)).toPoint());
+    _recordWidget = new RecordWidget();
+    setCentralWidget(_recordWidget);
 }
 
-/**
- * Save the settings of the application into the configuration file
- */
-void MainWindow::saveSettings()
-{
-    qDebug() << "[mainwindow] saving settings into" << _settings.fileName();
-    
-    _settings.setValue("window/size", size());
-    _settings.setValue("window/position", pos());
-}
-
-/**
- * Initialize the window's menu and actions
- */
 void MainWindow::initializeMenu()
 {
     qDebug() << "[mainwindow] initializing menu";
@@ -69,18 +54,28 @@ void MainWindow::initializeMenu()
     _aboutQtAction = _aboutMenu->addAction(tr("&Qt"), qApp, SLOT(aboutQt()));
 }
 
-void MainWindow::initializeCentralWidget()
+void MainWindow::load(QString filename)
 {
-    qDebug() << "[mainwindow] initializing central widget";
+    qDebug() << "[mainwindow] loading" << filename;
     
-    _recordWidget = new RecordWidget();
-    setCentralWidget(_recordWidget);
+    if(_record != 0)
+    {
+        delete _record;
+    }
+    QFile file(filename);
+    _record = Parser::parse(&file);
+    
+    emit loaded(_record);
 }
 
-/**
- * Open a file dialog to let the user choose a file to open
- * TODO Multiple checks about file
- */
+void MainWindow::loadSettings()
+{
+    qDebug() << "[mainwindow] loading settings from" << _settings.fileName();
+    
+    resize(_settings.value("window/size", QSize(400, 400)).toSize());
+    move(_settings.value("window/position", QPoint(200, 200)).toPoint());
+}
+
 void MainWindow::open()
 {
     qDebug() << "[mainwindow] opening file dialog";
@@ -106,19 +101,10 @@ void MainWindow::open()
     }
 }
 
-/**
- * Load a record from a file
- */
-void MainWindow::load(QString filename)
+void MainWindow::saveSettings()
 {
-    qDebug() << "[mainwindow] loading" << filename;
+    qDebug() << "[mainwindow] saving settings into" << _settings.fileName();
     
-    if(_record != 0)
-    {
-        delete _record;
-    }
-    QFile file(filename);
-    _record = Parser::parse(file);
-    
-    emit loaded(_record);
+    _settings.setValue("window/size", size());
+    _settings.setValue("window/position", pos());
 }

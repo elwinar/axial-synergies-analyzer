@@ -4,7 +4,7 @@
 #include <cmath>
 
 /**
- * The exact value of PI on maximal precision using a double.
+ * The exact (computationnal) value of pi on maximal precision using a double.
  */
 const double PI = std::atan(1.0) * 4;
 

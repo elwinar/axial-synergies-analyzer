@@ -1,10 +1,11 @@
 #ifndef MOTION_DETECTOR_H
 #define MOTION_DETECTOR_H
 
+#include <QMap>
 #include <QPair>
 #include <QString>
 
-#include "utils/record.h"
+class Record;
 
 /**
  * Detect the motion in a record using angular speed variation of a disjoint angle in the record. It compute peak of velocity, then search for the moment where the velocity goes below a certain proportion of the peak's speed on each side of the peak, exposing begin and end times of the motion.
@@ -16,7 +17,27 @@ public:
     /**
      * Create a motion detector for the given record
      */
-    MotionDetector(Record const * record);
+    MotionDetector(Record const * record = 0);
+    
+    /**
+     * Destroy the motion detector
+     */
+    ~MotionDetector();
+    
+    /**
+     * The factor used to compute the velocity threshold.
+     */
+    static double const VELOCITY_THRESHOLD_FACTOR = 0.05;
+    
+    /**
+     * A map containing the amplitudes for every recorded frame (when available)
+     */
+    QMap<unsigned int, double> amplitudes() const;
+    
+    /**
+     * The begining frame of the motion
+     */
+    unsigned int begining() const;
     
     /**
      * Run the detection providing marker labels for the fixed and mobile segments of the record.
@@ -30,17 +51,25 @@ public:
      */
     bool detected() const;
     
-    unsigned int begining() const;
-    unsigned int peak() const;
+    /**
+     * The end frame of the motion
+     */
     unsigned int end() const;
     
-    QMap<unsigned int, double> amplitudes() const;
-    QMap<unsigned int, double> speeds() const;
+    /**
+     * The frame where speed is maximum in motion
+     */
+    unsigned int peak() const;
     
     /**
-     * The factor used to compute the velocity threshold.
+     * Set the record to detect motion from
      */
-    static double const VELOCITY_THRESHOLD_FACTOR = 0.05;
+    void setRecord(Record * record);
+    
+    /**
+     * A map containing the speeds for every recorded frame (when available)
+     */
+    QMap<unsigned int, double> speeds() const;
     
 private:
     Record const * _record;
