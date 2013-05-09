@@ -2,11 +2,11 @@
 #define MAIN_WINDOW_H
 
 #include <QMainWindow>
-#include <QSettings>
 #include <QString>
 
 class QAction;
 class QMenu;
+class QSettings;
 class Record;
 class RecordWidget;
 
@@ -67,7 +67,12 @@ private:
     QAction * _quitAction;
     Record * _record;
     RecordWidget * _recordWidget;
-    QSettings _settings;
+    QSettings * _settings;
+    
+    /**
+     * Change the working record
+     */
+    void setRecord(Record * record);
 };
 
 #endif // MAIN_WINDOW_H

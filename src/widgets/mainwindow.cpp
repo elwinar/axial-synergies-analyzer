@@ -9,14 +9,17 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QMenuBar>
+#include <QSettings>
+#include <QString>
 #include <QStyle>
 
 #include "tools/parser.h"
 #include "utils/record.h"
 #include "widgets/recordwidget.h"
 
-MainWindow::MainWindow(QWidget * parent): QMainWindow(parent), _settings(QApplication::applicationFilePath().append(".ini"), QSettings::IniFormat)
+MainWindow::MainWindow(QWidget * parent): QMainWindow(parent)
 {
+    _settings = new QSettings(QApplication::applicationFilePath().append(".ini"), QSettings::IniFormat);
     _record = 0;
     loadSettings();
     initializeMenu();
@@ -25,25 +28,21 @@ MainWindow::MainWindow(QWidget * parent): QMainWindow(parent), _settings(QApplic
 
 MainWindow::~MainWindow()
 {
-    if(_record != 0)
-    {
-        delete _record;
-    }
+    setRecord(0);
     saveSettings();
+    delete _settings;
 }
 
 void MainWindow::initializeCentralWidget()
 {
-    qDebug() << "[mainwindow] initializing central widget";
-    
     _recordWidget = new RecordWidget();
     setCentralWidget(_recordWidget);
+    
+    QObject::connect(this, SIGNAL(loaded(Record *)), _recordWidget, SLOT(setRecord(Record *)));
 }
 
 void MainWindow::initializeMenu()
 {
-    qDebug() << "[mainwindow] initializing menu";
-    
     _fileMenu = menuBar()->addMenu(tr("&File"));
     _openAction = _fileMenu->addAction(tr("&Open"), this, SLOT(open()), QKeySequence("Ctrl+O"));
     _openAction->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
@@ -56,55 +55,50 @@ void MainWindow::initializeMenu()
 
 void MainWindow::load(QString filename)
 {
-    qDebug() << "[mainwindow] loading" << filename;
-    
-    if(_record != 0)
+    QFileInfo fileinfo(filename);
+    if(fileinfo.exists())
     {
-        delete _record;
+        _settings->setValue("open/dir", fileinfo.canonicalPath());
+        _settings->setValue("open/last", filename);
+        
+        QFile file(filename);
+        setRecord(Parser::parse(&file));
+        
+        emit loaded(_record);
     }
-    QFile file(filename);
-    _record = Parser::parse(&file);
-    
-    emit loaded(_record);
 }
 
 void MainWindow::loadSettings()
 {
-    qDebug() << "[mainwindow] loading settings from" << _settings.fileName();
+    resize(_settings->value("window/size", QSize(400, 400)).toSize());
+    move(_settings->value("window/position", QPoint(200, 200)).toPoint());
     
-    resize(_settings.value("window/size", QSize(400, 400)).toSize());
-    move(_settings.value("window/position", QPoint(200, 200)).toPoint());
+    if(_settings->contains("open/last"))
+    {
+        load(_settings->value("open/last").toString());
+    }
 }
 
 void MainWindow::open()
 {
-    qDebug() << "[mainwindow] opening file dialog";
-    
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose the file to open"), _settings.value("open/dir", QDir::home().path()).toString(), "csv (*.csv)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose the file to open"), _settings->value("open/dir", QDir::home().path()).toString(), "csv (*.csv)");
     if(!filename.isNull())
     {
-        QFileInfo fileinfo(filename);
-        if(fileinfo.exists())
-        {
-            _settings.setValue("open/dir", fileinfo.canonicalPath());
-            _settings.setValue("open/last", filename);
-            load(filename);
-        }
-        else
-        {
-            qDebug() << "[mainwindow] file" << filename << "doesn't seem to exists";
-        }
-    }
-    else
-    {
-        qDebug() << "[mainwindow] no file chosen, aborting";
+        load(filename);
     }
 }
 
 void MainWindow::saveSettings()
 {
-    qDebug() << "[mainwindow] saving settings into" << _settings.fileName();
-    
-    _settings.setValue("window/size", size());
-    _settings.setValue("window/position", pos());
+    _settings->setValue("window/size", size());
+    _settings->setValue("window/position", pos());
+}
+
+void MainWindow::setRecord(Record * record)
+{
+    if(_record != 0)
+    {
+        delete _record;
+    }
+    _record = record;
 }

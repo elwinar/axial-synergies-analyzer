@@ -3,13 +3,11 @@
 
 #include <QWidget>
 
-#include "tools/motiondetector.h"
-
 class QComboBox;
 class QCustomPlot;
-class QGridLayout;
-class QLabel;
-class QPushButton;
+class QCPItemStraightLine;
+class QSpinBox;
+class MotionDetector;
 class Record;
 
 class MotionDetectorWidget : public QWidget
@@ -24,26 +22,59 @@ public:
     ~MotionDetectorWidget();
     
 protected:
-    /**
-     * Initialize the widget's buttons
-     */
-    void initializeButtons();
-    
-    /**
-     * Initialize the widget's plot
-     */
-    void initializePlot();
-    
-    /**
-     * Initialize the widget's selectors
-     */
-    void initializeSelectors();
     
 public slots:
+    /**
+     * Clear the plot from all content
+     */
+    void clearPlot();
+    
+    /**
+     * Clear the selectors content
+     */
+    void clearComboBoxes();
+    
+    /**
+     * Draw the widget's plot according to the detector's state
+     */
+    void drawPlot();
+    
+    /**
+     * Draw the widget's motion's lines
+     */
+    void drawBeginLine(int position);
+    void drawPeakLine(int position);
+    void drawEndLine(int position);
+    
+    /**
+     * Run the detector, and update the widget according to it's result
+     */
+    void run();
+    
+    /**
+     * Save the result of the detection
+     */
+    void save();
+    
     /**
      * Update the record pointer of the widget
      */
     void setRecord(Record * record);
+    
+    /**
+     * Setup the comboboxes' contents
+     */
+    void setupComboBoxes();
+    
+    /**
+     * Setup the spinboxes' range
+     */
+    void setupSpinBoxes();
+    
+    /**
+     * Setup the plot legends and axis
+     */
+    void setupPlot();
 
 signals:
     /**
@@ -51,19 +82,35 @@ signals:
      */
     void recordChanged(Record * record);
     
+    /**
+     * Emitted whenever the detector run, either it found a motion or not
+     */
+    void detected();
+    
 private:
-    MotionDetector detector;
-    QComboBox * _distalFixedComboBox;
-    QComboBox * _distalMobileComboBox;
-    QLabel * _fixedLabel;
-    QGridLayout * _layout;
-    QLabel * _mobileLabel;
-    QCustomPlot * _plot;
-    QComboBox * _proximalFixedComboBox;
-    QComboBox * _proximalMobileComboBox;
     Record * _record;
-    QPushButton * _runButton;
-    QPushButton * _saveButton;
+    MotionDetector * _detector;
+    
+    QComboBox * _distalFixedComboBox;
+    QComboBox * _proximalFixedComboBox;
+    
+    QComboBox * _distalMobileComboBox;
+    QComboBox * _proximalMobileComboBox;
+    
+    QCustomPlot * _plot;
+    
+    QSpinBox * _beginSpinBox;
+    QSpinBox * _peakSpinBox;
+    QSpinBox * _endSpinBox;
+    
+    QCPItemStraightLine * _beginLine;
+    QCPItemStraightLine * _peakLine;
+    QCPItemStraightLine * _endLine;
+    
+    /**
+     * Initialize the widget's layout
+     */
+    void initializeLayout();
 };
 
 #endif // MOTION_DETECTOR_WIDGET_H

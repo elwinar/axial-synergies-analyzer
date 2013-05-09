@@ -37,7 +37,7 @@ public:
     /**
      * The begining frame of the motion
      */
-    unsigned int begining() const;
+    unsigned int begin() const;
     
     /**
      * Run the detection providing marker labels for the fixed and mobile segments of the record.
@@ -62,6 +62,11 @@ public:
     unsigned int peak() const;
     
     /**
+     * The record on which the detector applies
+     */
+    Record * record() const;
+    
+    /**
      * Set the record to detect motion from
      */
     void setRecord(Record * record);
@@ -71,6 +76,11 @@ public:
      */
     QMap<unsigned int, double> speeds() const;
     
+    /**
+     * The threshold value for the detected motion
+     */
+    double threshold() const;
+    
 private:
     Record const * _record;
     
@@ -79,7 +89,7 @@ private:
     
     bool _detected;
     
-    unsigned int _begining;
+    unsigned int _begin;
     unsigned int _peak;
     unsigned int _end;
 };
