@@ -24,10 +24,12 @@ Record * Parser::parse(QFile * file)
     QVector<QString> labels;
     QVector<Marker> markers;
     
+    record->setFilename(file->fileName());
+    
     /*
-     * skip the filename
+     * read the name of the record
      */
-    stream.readLine();
+    record->setName(stream.readLine());
     
     /*
      * read each line while not meeting the label TRAJECTORIES to skip metadata

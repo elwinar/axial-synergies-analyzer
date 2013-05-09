@@ -1,11 +1,21 @@
 #include "recordwidget.h"
 
+#include <QDebug>
+
+#include "utils/record.h"
 #include "widgets/motiondetectorwidget.h"
 
 RecordWidget::RecordWidget(QWidget *parent, Record * record) : QTabWidget(parent)
 {
-    _record = record;
-    addTab(new MotionDetectorWidget(), tr("Motion Detection"));
+    setRecord(record);
+    initializeMotionDetectorWidget();
+}
+
+void RecordWidget::initializeMotionDetectorWidget()
+{
+    _motionDetectorWidget = new MotionDetectorWidget();
+    addTab(_motionDetectorWidget, tr("Motion Detection"));
+    QObject::connect(this, SIGNAL(recordChanged(Record *)), _motionDetectorWidget, SLOT(setRecord(Record *)));
 }
 
 void RecordWidget::setRecord(Record * record)

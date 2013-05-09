@@ -39,6 +39,11 @@ public:
     unsigned int duration() const;
     
     /**
+     * The physical filename of the record
+     */
+    QString filename() const;
+    
+    /**
      * Return the list of the record's markers' labels
      */
     QList<QString> labels() const;
@@ -49,14 +54,29 @@ public:
     Marker marker(QString label) const;
     
     /**
+     * The name of the record
+     */
+    QString name() const;
+    
+    /**
      * Set the duration of the record
      */
     void setDuration(unsigned int duration);
     
     /**
+     * Set the filename of the record
+     */
+    void setFilename(QString filename);
+    
+    /**
      * Set a marker of the record based on its name
      */
     void setMarker(QString label, Marker marker);
+    
+    /**
+     * Set the name of the record
+     */
+    void setName(QString name);
     
 protected:
     /**
@@ -65,8 +85,10 @@ protected:
     Marker generate(Point point) const;
     
 private:
-    QMap<QString, Marker> _markers;
     unsigned int _duration;
+    QString _filename;
+    QMap<QString, Marker> _markers;
+    QString _name;
 };
 
 #endif // RECORD_H
