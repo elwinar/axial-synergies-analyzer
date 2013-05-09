@@ -7,9 +7,11 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
+#include <QStatusBar>
 #include <QString>
 #include <QStyle>
 
@@ -21,6 +23,8 @@ MainWindow::MainWindow(QWidget * parent): QMainWindow(parent)
 {
     _settings = new QSettings(QApplication::applicationFilePath().append(".ini"), QSettings::IniFormat);
     _record = 0;
+    _workingFileLabel = new QLabel();
+    statusBar()->addPermanentWidget(_workingFileLabel);
     loadSettings();
     initializeMenu();
     initializeCentralWidget();
@@ -63,6 +67,8 @@ void MainWindow::load(QString filename)
         
         QFile file(filename);
         setRecord(Parser::parse(&file));
+        
+        _workingFileLabel->setText(filename);
         
         emit loaded(_record);
     }

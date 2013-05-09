@@ -56,6 +56,8 @@ public slots:
      */
     void run();
     
+    void update();
+    
     /**
      * Save the result of the detection
      */

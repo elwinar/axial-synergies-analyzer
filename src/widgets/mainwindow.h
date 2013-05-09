@@ -5,6 +5,7 @@
 #include <QString>
 
 class QAction;
+class QLabel;
 class QMenu;
 class QSettings;
 class Record;
@@ -68,6 +69,7 @@ private:
     Record * _record;
     RecordWidget * _recordWidget;
     QSettings * _settings;
+    QLabel * _workingFileLabel;
     
     /**
      * Change the working record

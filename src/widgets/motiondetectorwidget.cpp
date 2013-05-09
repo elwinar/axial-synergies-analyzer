@@ -22,8 +22,6 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent, Record * record): Q
     initializeLayout();
     
     setRecord(record);
-    
-    QObject::connect(this, SIGNAL(detected()), this, SLOT(drawPlot()));
 }
 
 MotionDetectorWidget::~MotionDetectorWidget()
@@ -143,8 +141,8 @@ void MotionDetectorWidget::initializeLayout()
     fixedAngleLayout->addWidget(_proximalFixedComboBox);
     fixedAngleLayout->addWidget(_distalFixedComboBox);
     comboBoxesLayout->addLayout(fixedAngleLayout);
-    QObject::connect(_proximalFixedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
-    QObject::connect(_distalFixedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
+    QObject::connect(_proximalFixedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+    QObject::connect(_distalFixedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
     
     QHBoxLayout * mobileAngleLayout = new QHBoxLayout();
     QLabel * mobileLabel = new QLabel(tr("Mobile angle"));
@@ -154,8 +152,8 @@ void MotionDetectorWidget::initializeLayout()
     mobileAngleLayout->addWidget(_proximalMobileComboBox);
     mobileAngleLayout->addWidget(_distalMobileComboBox);
     comboBoxesLayout->addLayout(mobileAngleLayout);
-    QObject::connect(_proximalMobileComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
-    QObject::connect(_distalMobileComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(run()));
+    QObject::connect(_proximalMobileComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+    QObject::connect(_distalMobileComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
     
     layout->addLayout(comboBoxesLayout);
     
@@ -193,22 +191,25 @@ void MotionDetectorWidget::initializeLayout()
     QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 }
 
+void MotionDetectorWidget::update()
+{
+    // FIXME pseudo try-catch minable pour palier à un problème momentanné dû à une conception à l'arrache
+    if(_proximalFixedComboBox->currentIndex() != -1 &&
+        _distalFixedComboBox->currentIndex() != -1 &&
+        _proximalMobileComboBox->currentIndex() != -1 &&
+        _distalMobileComboBox->currentIndex() != -1 )
+    {
+        run();
+    }
+}
+
 void MotionDetectorWidget::run()
 {
     if(_record != 0)
     {
-        // FIXME pseudo try-catch minable pour palier à un problème momentanné dû à une conception à l'arrache
-        if(_proximalFixedComboBox->currentIndex() == -1 ||
-            _distalFixedComboBox->currentIndex() == -1 ||
-            _proximalMobileComboBox->currentIndex() == -1 ||
-            _distalMobileComboBox->currentIndex() == -1 )
-        {
-            return;
-        }
-        
         _detector->detect(QPair<QString, QString>(_proximalFixedComboBox->currentText(), _distalFixedComboBox->currentText()), QPair<QString, QString>(_proximalMobileComboBox->currentText(), _distalMobileComboBox->currentText()));
         
-        emit detected();
+        drawPlot();
         
         if(_detector->detected())
         {
@@ -259,6 +260,7 @@ void MotionDetectorWidget::setRecord(Record * record)
         setupPlot();
         setupSpinBoxes();
         setDisabled(false);
+        _plot->setTitle(_record->name());
         run();
     }
     
@@ -284,6 +286,11 @@ void MotionDetectorWidget::setupComboBoxes()
     Q_ASSERT(_record != 0);
     
     clearComboBoxes();
+    
+    _proximalFixedComboBox->setCurrentIndex(-1);
+    _distalFixedComboBox->setCurrentIndex(-1);
+    _proximalMobileComboBox->setCurrentIndex(-1);
+    _distalMobileComboBox->setCurrentIndex(-1);
     
     QList<QString> labels = _record->labels();
     
