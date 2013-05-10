@@ -40,6 +40,11 @@ public:
     unsigned int begin() const;
     
     /**
+     * Sets the begining frame of the motion
+     */
+    void setBegin(unsigned int newBegin);
+    
+    /**
      * Run the detection providing marker labels for the fixed and mobile segments of the record.
      * 
      * @return True if a motion has been detected, whether the detection has been run and found nothing or hadn't been run.
@@ -57,9 +62,19 @@ public:
     unsigned int end() const;
     
     /**
+     * Sets the end frame of the motion
+     */
+    void setEnd(unsigned int newEnd);
+    
+    /**
      * The frame where speed is maximum in motion
      */
     unsigned int peak() const;
+    
+    /**
+     * Sets The frame where speed is maximum in motion
+     */
+    void setPeak(unsigned int newPeak);
     
     /**
      * The record on which the detector applies

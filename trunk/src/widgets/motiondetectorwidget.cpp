@@ -54,7 +54,7 @@ void MotionDetectorWidget::clearComboBoxes()
 
 void MotionDetectorWidget::drawBeginLine(int position)
 {
-    _beginLine->setPen(QPen(Qt::gray));
+    _beginLine->setPen(QPen(Qt::green));
     _beginLine->point1->setAxes(_plot->xAxis, _plot->yAxis2);
     _beginLine->point1->setCoords(position, 0);
     _beginLine->point2->setAxes(_plot->xAxis, _plot->yAxis2);
@@ -66,7 +66,7 @@ void MotionDetectorWidget::drawBeginLine(int position)
 
 void MotionDetectorWidget::drawPeakLine(int position)
 {
-    _peakLine->setPen(QPen(Qt::gray));
+    _peakLine->setPen(QPen(Qt::green));
     _peakLine->point1->setAxes(_plot->xAxis, _plot->yAxis2);
     _peakLine->point1->setCoords(position, 0);
     _peakLine->point2->setAxes(_plot->xAxis, _plot->yAxis2);
@@ -78,7 +78,7 @@ void MotionDetectorWidget::drawPeakLine(int position)
 
 void MotionDetectorWidget::drawEndLine(int position)
 {
-    _endLine->setPen(QPen(Qt::gray));
+    _endLine->setPen(QPen(Qt::green));
     _endLine->point1->setAxes(_plot->xAxis, _plot->yAxis2);
     _endLine->point1->setCoords(position, 0);
     _endLine->point2->setAxes(_plot->xAxis, _plot->yAxis2);
@@ -231,11 +231,16 @@ void MotionDetectorWidget::save()
         QFile file("save.csv");
         file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
         QTextStream out(&file);
+			
+		_detector->setBegin(_beginSpinBox->value());
+		_detector->setPeak(_peakSpinBox->value());
+		_detector->setEnd(_endSpinBox->value());
         
         double amplitude = abs(_detector->amplitudes().value(_detector->begin()) - _detector->amplitudes().value(_detector->end()));
         double duration = _detector->end() - _detector->begin();
         
-        out << _record->filename() << "," << _proximalMobileComboBox->currentText() << "," << _distalMobileComboBox->currentText() << "," << duration << "," << amplitude << "," << (amplitude / duration) << "\n";
+        out << _record->filename() << "," << _proximalMobileComboBox->currentText() << "," << _distalMobileComboBox->currentText() 
+		<< "," << duration << "," << amplitude << "," << (amplitude / duration) << "," << _detector->begin() << "," << _detector->amplitudes().value(_detector->begin()) << "," << _detector->speeds().value(_detector->begin()) << "," << _detector->peak() << "," << _detector->amplitudes().value(_detector->peak()) << "," << _detector->speeds().value(_detector->peak()) << "," << _detector->end() << "," << _detector->amplitudes().value(_detector->end()) << "," << _detector->speeds().value(_detector->end()) << "\n" ;
     }
     else
     {
@@ -299,7 +304,7 @@ void MotionDetectorWidget::setupComboBoxes()
     _distalFixedComboBox->insertItems(0, labels);
     _distalFixedComboBox->setCurrentIndex(labels.indexOf("Z"));
     _proximalMobileComboBox->insertItems(0, labels);
-    _proximalMobileComboBox->setCurrentIndex(labels.indexOf("C7"));
+    _proximalMobileComboBox->setCurrentIndex(labels.indexOf("RSHO"));
     _distalMobileComboBox->insertItems(0, labels);
     _distalMobileComboBox->setCurrentIndex(labels.indexOf("RTRO"));
 }
