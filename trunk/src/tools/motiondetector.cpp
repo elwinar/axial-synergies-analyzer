@@ -30,21 +30,6 @@ unsigned int MotionDetector::begin() const
     return _begin;
 }
 
-void MotionDetector::setBegin(unsigned int newBegin)
-{
-	_begin = newBegin;
-}
-
-void MotionDetector::setPeak(unsigned int newPeak)
-{
-	_peak = newPeak;
-}
-
-void MotionDetector::setEnd(unsigned int newEnd)
-{
-	_end = newEnd;
-}
-
 bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
 {
     Q_ASSERT(_record != 0);
@@ -148,6 +133,21 @@ unsigned int MotionDetector::peak() const
 {
     Q_ASSERT(detected() == true);
     return _peak;
+}
+
+void MotionDetector::setBegin(unsigned int newBegin)
+{
+        _begin = newBegin;
+}
+
+void MotionDetector::setEnd(unsigned int newEnd)
+{
+        _end = newEnd;
+}
+
+void MotionDetector::setPeak(unsigned int newPeak)
+{
+        _peak = newPeak;
 }
 
 void MotionDetector::setRecord(Record * record)

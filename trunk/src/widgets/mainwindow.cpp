@@ -42,7 +42,7 @@ void MainWindow::initializeCentralWidget()
     _recordWidget = new RecordWidget();
     setCentralWidget(_recordWidget);
     
-    QObject::connect(this, SIGNAL(loaded(Record *)), _recordWidget, SLOT(setRecord(Record *)));
+    QObject::connect(this, SIGNAL(recordLoaded(Record *)), _recordWidget, SLOT(setRecord(Record *)));
 }
 
 void MainWindow::initializeMenu()
@@ -57,7 +57,7 @@ void MainWindow::initializeMenu()
     _aboutQtAction = _aboutMenu->addAction(tr("&Qt"), qApp, SLOT(aboutQt()));
 }
 
-void MainWindow::load(QString filename)
+void MainWindow::loadRecord(QString filename)
 {
     QFileInfo fileinfo(filename);
     if(fileinfo.exists())
@@ -70,7 +70,7 @@ void MainWindow::load(QString filename)
         
         _workingFileLabel->setText(filename);
         
-        emit loaded(_record);
+        emit recordLoaded(_record);
     }
 }
 
@@ -81,7 +81,7 @@ void MainWindow::loadSettings()
     
     if(_settings->contains("open/last"))
     {
-        load(_settings->value("open/last").toString());
+        loadRecord(_settings->value("open/last").toString());
     }
 }
 
@@ -90,7 +90,7 @@ void MainWindow::open()
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose the file to open"), _settings->value("open/dir", QDir::home().path()).toString(), "csv (*.csv)");
     if(!filename.isNull())
     {
-        load(filename);
+        loadRecord(filename);
     }
 }
 
