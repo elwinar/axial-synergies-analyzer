@@ -11,33 +11,20 @@ class RecordWidget : public QTabWidget
     Q_OBJECT
 
 public:
-    /**
-     * Create a widget to manipulate a record
-     */
-    RecordWidget(QWidget * parent = 0, Record * record = 0);
-
-protected:
-    /**
-     * Initialize the motion detector widget of the widget
-     */
-    void initializeMotionDetectorWidget();
+    RecordWidget(Record * record = 0, QWidget * parent = 0);
     
 public slots:
-    /**
-     * Update the record pointer of the widget
-     */
     void setRecord(Record * record);
     
 signals:
-    /**
-     * Emitted when the record pointer of the widget change
-     */
     void recordChanged(Record * record);
 
+protected:
+    void initializeMotionDetectorWidget();
+
 private:
-    Record * _record;
-    
     MotionDetectorWidget * _motionDetectorWidget;
+    Record * _record;
 };
 
 #endif // RECORDWIDGET_H

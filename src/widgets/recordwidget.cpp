@@ -5,7 +5,7 @@
 #include "utils/record.h"
 #include "widgets/motiondetectorwidget.h"
 
-RecordWidget::RecordWidget(QWidget *parent, Record * record) : QTabWidget(parent)
+RecordWidget::RecordWidget(Record * record, QWidget *parent) : QTabWidget(parent)
 {
     setRecord(record);
     initializeMotionDetectorWidget();
