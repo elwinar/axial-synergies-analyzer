@@ -44,7 +44,7 @@ public:
      * 
      * @return True if a motion has been detected, whether the detection has been run and found nothing or hadn't been run.
      */
-    bool detect(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
+    bool run(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
     
     /**
      * Check if a motion has been detected, whether the detection has been run and found nothing or hadn't been run.
@@ -60,6 +60,11 @@ public:
      * The frame where speed is maximum in motion
      */
     unsigned int peak() const;
+    
+    /**
+     * Tell if the detector have already ran
+     */
+    bool ran() const;
     
     /**
      * The record on which the detector applies
@@ -103,6 +108,7 @@ private:
     QMap<unsigned int, double> _speeds;
     
     bool _detected;
+    bool _ran;
     
     unsigned int _begin;
     unsigned int _peak;

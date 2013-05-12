@@ -23,6 +23,7 @@ HEADERS += src/libs/qcustomplot.h \
            src/utils/record.h \
            src/utils/vector.h \
            src/widgets/angleselector.h \
+           src/widgets/angularmotionplot.h \
            src/widgets/mainwindow.h \
            src/widgets/motiondetectorwidget.h \
            src/widgets/recordwidget.h \
@@ -37,6 +38,7 @@ SOURCES += src/main.cpp \
            src/utils/record.cpp \
            src/utils/vector.cpp \
            src/widgets/angleselector.cpp \
+           src/widgets/angularmotionplot.cpp \
            src/widgets/mainwindow.cpp \
            src/widgets/motiondetectorwidget.cpp \
            src/widgets/recordwidget.cpp \

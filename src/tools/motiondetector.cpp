@@ -12,6 +12,7 @@ MotionDetector::MotionDetector(Record const * record)
 {
     _record = record;
     _detected = false;
+    _ran = false;
 }
 
 MotionDetector::~MotionDetector()
@@ -20,7 +21,7 @@ MotionDetector::~MotionDetector()
 
 QMap<unsigned int, double> MotionDetector::amplitudes() const
 {
-    Q_ASSERT(detected() == true);
+    Q_ASSERT(ran() == true);
     return _amplitudes;
 }
 
@@ -30,27 +31,49 @@ unsigned int MotionDetector::begin() const
     return _begin;
 }
 
-bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
+bool MotionDetector::detected() const
+{
+    return _detected;
+}
+
+unsigned int MotionDetector::end() const
+{
+    Q_ASSERT(detected() == true);
+    return _end;
+}
+
+unsigned int MotionDetector::peak() const
+{
+    Q_ASSERT(detected() == true);
+    return _peak;
+}
+
+bool MotionDetector::ran() const
+{
+    return _ran;
+}
+
+bool MotionDetector::run(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
 {
     Q_ASSERT(_record != 0);
     
-    /**
+    /*
      * Clean eventually existing data
      */
     _amplitudes.clear();
     _speeds.clear();
     _detected = false;
-    
-    /**
+    _ran = true;
+
+    /* 
      * Retrieve the markers
-     * TODO Check if there is an unknown marker
      */
     Marker fixedProximal = _record->marker(fixed.first);
     Marker fixedDistal = _record->marker(fixed.second);
     Marker mobileProximal = _record->marker(mobile.first);
     Marker mobileDistal = _record->marker(mobile.second);
     
-    /**
+    /* 
      * Compute amplitudes of the angle at every recorded frame
      */
     for(unsigned int time = 1; time < _record->duration(); time++)
@@ -61,7 +84,7 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
         }
     }
     
-    /**
+    /* 
      * Compute angular speeds at every recorded frame, and remember peak time
      */
     _speeds.insert(1, 0);
@@ -87,8 +110,8 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
         }
     }
     
-    /**
-     * Begining of motion is computed from peak time and backward-tracking
+    /* 
+     * Begining of motion is computed from peak time and backward- tracking
      */
     _begin = 0;
     for(unsigned int time = _peak; time >= 1; time--)
@@ -100,7 +123,7 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
         }
     }
     
-    /**
+    /* 
      * End of the motion is computed from peak time and forward-tracking
      */
     _end = 0;
@@ -113,26 +136,15 @@ bool MotionDetector::detect(QPair<QString, QString> fixed, QPair<QString, QStrin
         }
     }
     
-    _detected = true;
+    /*
+     * If we found a begin and an end to the motion, the is a motion found
+     */
+    if(_begin != 0 && _end != 0)
+    {
+        _detected = true;
+    }
     
     return detected();
-}
-
-bool MotionDetector::detected() const
-{
-    return _detected;
-}
-
-unsigned int MotionDetector::end() const
-{
-    Q_ASSERT(detected() == true);
-    return _end;
-}
-
-unsigned int MotionDetector::peak() const
-{
-    Q_ASSERT(detected() == true);
-    return _peak;
 }
 
 void MotionDetector::setBegin(unsigned int newBegin)
@@ -157,7 +169,7 @@ void MotionDetector::setRecord(Record * record)
 
 QMap<unsigned int, double> MotionDetector::speeds() const
 {
-    Q_ASSERT(detected() == true);
+    Q_ASSERT(ran() == true);
     return _speeds;
 }
 

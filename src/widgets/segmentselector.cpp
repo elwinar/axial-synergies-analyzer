@@ -10,11 +10,11 @@ SegmentSelector::SegmentSelector(QWidget * parent): QWidget(parent)
     
     _proximalComboBox = new QComboBox();
     _layout->addWidget(_proximalComboBox);
-    QObject::connect(_proximalComboBox, SIGNAL(valueChanged(QString)), this, SLOT(onProximalValueChanged()));
+    QObject::connect(_proximalComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(onSelectionChange()));
     
     _distalComboBox = new QComboBox();
     _layout->addWidget(_distalComboBox);
-    QObject::connect(_distalComboBox, SIGNAL(valueChanged(QString)), this, SLOT(onDistalValueChanged()));
+    QObject::connect(_distalComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(onSelectionChange()));
 }
 
 QString SegmentSelector::distal() const
@@ -22,16 +22,9 @@ QString SegmentSelector::distal() const
     return _distalComboBox->currentText();
 }
 
-void SegmentSelector::onDistalValueChanged()
+void SegmentSelector::onSelectionChange()
 {
-    emit distalValueChanged(distal());
-    emit valueChanged(value());
-}
-
-void SegmentSelector::onProximalValueChanged()
-{
-    emit proximalValueChanged(proximal());
-    emit valueChanged(value());
+    emit selectionChanged(proximal(), distal());
 }
 
 QString SegmentSelector::proximal() const
@@ -56,20 +49,4 @@ void SegmentSelector::setItems(QList<QString> value)
 void SegmentSelector::setProximal(QString value)
 {
     _proximalComboBox->setCurrentIndex(_items.indexOf(value));
-}
-
-void SegmentSelector::setValue(QString proximal, QString distal)
-{
-    setProximal(proximal);
-    setDistal(distal);
-}
-
-void SegmentSelector::setValue(QPair<QString, QString> value)
-{
-    setValue(value.first, value.second);
-}
-
-QPair<QString, QString> SegmentSelector::value() const
-{
-    return QPair<QString, QString>(proximal(), distal());
 }

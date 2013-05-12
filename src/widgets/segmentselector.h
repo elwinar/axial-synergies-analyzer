@@ -18,23 +18,17 @@ public:
     
     QString distal() const;
     QString proximal() const;
-    QPair<QString, QString> value() const;
 
 public slots:
     void setDistal(QString value);
     void setItems(QList<QString> value);
     void setProximal(QString value);
-    void setValue(QString proximal, QString distal);
-    void setValue(QPair<QString, QString> value);
 
-protected:
-    void onDistalValueChanged();
-    void onProximalValueChanged();
+protected slots:
+    void onSelectionChange();
     
 signals:
-    void distalValueChanged(QString);
-    void proximalValueChanged(QString);
-    void valueChanged(QPair<QString, QString>);
+    void selectionChanged(QString proximal, QString distal);
     
 private:
     QList<QString> _items;

@@ -11,24 +11,29 @@ public:
     AngularMotionPlot(QWidget * parent = 0);
     
 public slots:
+    void clear();
+    void setAmplitudeCurve(QMap<unsigned int, double> value);
+    void setBeginLine(unsigned int value);
+    void setEndLine(unsigned int value);
+    void setPeakLine(unsigned int value);
     void setRange(unsigned int start, unsigned int stop);
-    void setAmplitudes(QMap<unsigned int, double> value);
-    void setSpeeds(QMap<unsigned int, double> value);
-    void setBegin(unsigned int value);
-    void setPeak(unsigned int value);
-    void setEnd(unsigned int value);
+    void setSpeedCurve(QMap<unsigned int, double> value);
     
 protected:
     
 signals:
     
 private:
+    QCPAxis * _timeAxis;
+    QCPAxis * _amplitudeAxis;
+    QCPAxis * _speedAxis;
+    
     QCPItemStraightLine * _beginLine;
     QCPItemStraightLine * _endLine;
     QCPItemStraightLine * _peakLine;
     
-    void drawCurve(QMap<unsigned int, double> data, QPen pen, QCPAxis * xAxis, QCPAxis * yAxis, QString name);
-    void drawLine(unsigned int index);
+    void drawCurve(QMap<unsigned int, double> data, QString name, QPen pen, QCPAxis * x, QCPAxis * y);
+    void moveLine(QCPItemStraightLine * line, unsigned int index, QPen pen, QCPAxis * x, QCPAxis * y);
 };
 
 #endif // ANGULAR_MOTION_PLOT_H
