@@ -19,26 +19,18 @@ public:
     
     QPair<QString, QString> fixed() const;
     QPair<QString, QString> mobile() const;
-    QPair<QPair<QString, QString>, QPair<QString, QString> > value() const;
     
 public slots:
-    void setFixed(QString proximal, QString distal);
     void setFixed(QPair<QString, QString> value);
     void setItems(QList<QString> value);
     void setLabels(QString fixed, QString mobile);
-    void setMobile(QString proximal, QString distal);
     void setMobile(QPair<QString, QString> value);
-    void setValue(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
-    void setValue(QPair<QPair<QString, QString>, QPair<QString, QString> > value);
     
-protected:
-    void onFixedValueChanged();
-    void onMobileValueChanged();
+protected slots:
+    void onSelectionChange();
     
 signals:
-    void fixedValueChanged(QPair<QString, QString> value);
-    void mobileValueChanged(QPair<QString, QString> value);
-    void valueChanged(QPair<QPair<QString, QString>, QPair<QString, QString> > value);
+    void selectionChanged(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
     
 private:
     QGridLayout * _layout;

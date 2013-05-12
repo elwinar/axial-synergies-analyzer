@@ -6,6 +6,7 @@
 #include "tools/motiondetector.h"
 
 class AngleSelector;
+class AngularMotionPlot;
 class QVBoxLayout;
 class Record;
 
@@ -21,7 +22,8 @@ public:
 public slots:
     void setRecord(Record * record);
     
-protected:
+protected slots:
+    void onSelectionChange();
 
 signals:
     void recordChanged(Record * record);
@@ -29,6 +31,7 @@ signals:
 private:
     MotionDetector _detector;
     QVBoxLayout * _layout;
+    AngularMotionPlot * _plot;
     Record * _record;
     AngleSelector * _selector;
 };
