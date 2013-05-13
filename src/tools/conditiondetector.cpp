@@ -6,49 +6,42 @@
 #include "utils/record.h"
 #include "utils/vector.h"
 
-ConditionDetector::ConditionDetector(Record * record)
+QString ConditionDetector::detect(Record * record)
 {
-	_record = record;
-}
-
-void ConditionDetector::detectCondition()
-{
+	QString condition;
+	
 	// if none of this markers is contained in the record
-	if(!_record->contains("BALAVD") && !_record->contains("BALAVG") &&	!_record->contains("BALARD") &&	!_record->contains("BALAVRG"))
+	if(!record->contains("BALAVD") && !record->contains("BALAVG") && !record->contains("BALARD") &&	!record->contains("BALARG"))
 	{
-		_condition = "STD";
+		condition = "STD";
 	}
 	else
 	{
 		Point proximal;
 		Point distal;
-		bool points_are_init = false;
+		bool diagonalFound = false;
 		
-		for(unsigned int duration = 1; duration <= _record->duration(); duration ++)
+		for(unsigned int duration = 1; duration <= record->duration(); duration ++)
 		{
 			// if the first diagonal is set at given duration.
-			if(_record->marker("BALAVD").exists(duration) && _record->marker("BALARG").exists(duration))
+			if(record->marker("BALAVD").exists(duration) && record->marker("BALARG").exists(duration))
 			{
-				proximal = _record->marker("BALAVD").point(duration);
-				distal = _record->marker("BALARG").point(duration);
-				points_are_init = true;
+				proximal = record->marker("BALAVD").point(duration);
+				distal = record->marker("BALARG").point(duration);
+				diagonalFound = true;
 				break;
 			}
 			// if the second diagonal is set at given duration.
-			if(_record->marker("BALAVG").exists(duration) && _record->marker("BALARD").exists(duration))
+			if(record->marker("BALAVG").exists(duration) && record->marker("BALARD").exists(duration))
 			{
-				proximal = _record->marker("BALAVG").point(duration);
-				distal = _record->marker("BALARD").point(duration);
-				points_are_init = true;
+				proximal = record->marker("BALAVG").point(duration);
+				distal = record->marker("BALARD").point(duration);
+				diagonalFound = true;
 				break;
 			}
 		}
 		
-		if(!points_are_init)
-		{
-			_condition = "NO DIAGONAL";
-		}
-		else
+		if(diagonalFound)
 		{
 			Vector diagonal(proximal, distal);
 			QPair<double, double> ankBoard(550, 620);
@@ -56,21 +49,21 @@ void ConditionDetector::detectCondition()
 			
 			if(diagonal.length() >= ankBoard.first && diagonal.length() <= ankBoard.second)
 			{
-				_condition = "ANK";
+				condition = "ANK";
 			}
 			else if(diagonal.length() >= kneBoard.first && diagonal.length() <= kneBoard.second)
 			{
-				_condition = "KNE";
+				condition = "KNE";
 			}
 			else
 			{
-				_condition = "FALSE DIAGONAL";
+				condition = "INCORRECT DIAGONAL SIZE";
 			}
 		}
+		else
+		{
+			condition = "NO DIAGONAL FOUND";
+		}
 	}
-}
-
-QString ConditionDetector::condition()
-{
-	return _condition;
+	return condition;
 }
