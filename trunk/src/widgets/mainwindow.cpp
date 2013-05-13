@@ -40,7 +40,6 @@ MainWindow::~MainWindow()
 void MainWindow::initializeCentralWidget()
 {
     _recordWidget = new RecordWidget();
-    qDebug() << "[mainwindow] set the settings of recordwidget";
     _recordWidget->setSettings(_settings);
     setCentralWidget(_recordWidget);
     
