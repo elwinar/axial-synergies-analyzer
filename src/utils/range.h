@@ -3,17 +3,26 @@
 
 #include <QMap>
 
+/**
+ * Represents a portion of an emg record.
+ */
 class Range
 {
 public:
-	Range(QMap * emg, int begin, int end);
-	double air(Range * baseRange);
-	double level();
+	/**
+	 * Creates a Range in the EMG map between position begin and position end. The level is calculated from EMG.
+	 */
+	Range(QMap<unsigned int, double> * emg, int begin, int end);
+	
+	/**
+	 * @return the current level value.
+	 */
+	double level() const;
 	
 private:
 	int _begin;
 	int _end;
-	int _level;
+	double _level;
 };
 
-#endin // RANGE_H
+#endif // RANGE_H
