@@ -3,18 +3,20 @@
 
 #include <QTabWidget>
 
-class Record;
+class QSettings;
 class MotionDetectorWidget;
+class Record;
 
 class RecordWidget : public QTabWidget
 {
     Q_OBJECT
 
 public:
-    RecordWidget(Record * record = 0, QWidget * parent = 0);
+    RecordWidget(QWidget * parent = 0);
     
 public slots:
-    void setRecord(Record * record);
+    void setRecord(Record * value);
+    void setSettings(QSettings * value);
     
 signals:
     void recordChanged(Record * record);
@@ -25,6 +27,7 @@ protected:
 private:
     MotionDetectorWidget * _motionDetectorWidget;
     Record * _record;
+    QSettings * _settings;
 };
 
 #endif // RECORDWIDGET_H

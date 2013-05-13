@@ -7,7 +7,7 @@ TARGET = axial-synergies-analyzer
 DESTDIR = bin
 OBJECTS_DIR = obj
 MOC_DIR = moc
-CONFIG += debug_and_release static
+CONFIG += debug_and_release console
 
 DEPENDPATH  += src src/libs src/tools src/utils src/widgets
 INCLUDEPATH += src src/libs src/tools src/utils src/widgets

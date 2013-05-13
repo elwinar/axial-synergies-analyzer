@@ -1,6 +1,8 @@
 #ifndef MOTION_DETECTOR_WIDGET_H
 #define MOTION_DETECTOR_WIDGET_H
 
+#include <QPair>
+#include <QString>
 #include <QWidget>
 
 #include "tools/motiondetector.h"
@@ -20,20 +22,23 @@ public:
     Record * record() const;
     
 public slots:
+    void run();
     void setRecord(Record * record);
+    void setDefaultAngle(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
     
 protected slots:
-    void onSelectionChange();
 
 signals:
     void recordChanged(Record * record);
     
 private:
-    MotionDetector _detector;
+    QPair<QString, QString> _fixedDefault;
     QVBoxLayout * _layout;
+    QPair<QString, QString> _mobileDefault;
+    MotionDetector _motionDetector;
     AngularMotionPlot * _plot;
     Record * _record;
-    AngleSelector * _selector;
+    AngleSelector * _angleSelector;
 };
 
 #endif // MOTION_DETECTOR_WIDGET_H

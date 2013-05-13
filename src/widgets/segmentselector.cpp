@@ -1,6 +1,7 @@
 #include "segmentselector.h"
 
 #include <QComboBox>
+#include <QDebug>
 #include <QHBoxLayout>
 
 SegmentSelector::SegmentSelector(QWidget * parent): QWidget(parent)
@@ -34,6 +35,7 @@ QString SegmentSelector::proximal() const
 
 void SegmentSelector::setDistal(QString value)
 {
+    qDebug() << "[segmentselector] distal point set to" << value;
     _distalComboBox->setCurrentIndex(_items.indexOf(value));
 }
 
@@ -48,5 +50,6 @@ void SegmentSelector::setItems(QList<QString> value)
 
 void SegmentSelector::setProximal(QString value)
 {
+    qDebug() << "[segmentselector] proximal point set to" << value;
     _proximalComboBox->setCurrentIndex(_items.indexOf(value));
 }

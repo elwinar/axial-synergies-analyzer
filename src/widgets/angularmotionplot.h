@@ -32,7 +32,7 @@ private:
     QCPItemStraightLine * _endLine;
     QCPItemStraightLine * _peakLine;
     
-    void drawCurve(QMap<unsigned int, double> data, QString name, QPen pen, QCPAxis * x, QCPAxis * y);
+    void drawCurve(QMap<unsigned int, double> data, QString name, QPen pen, QCPAxis * keyAxis, QCPAxis * valueAxis, bool rescaleValueAxis = false);
     void moveLine(QCPItemStraightLine * line, unsigned int index, QPen pen, QCPAxis * x, QCPAxis * y);
 };
 
