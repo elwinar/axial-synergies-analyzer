@@ -1,5 +1,6 @@
 #include "angleselector.h"
 
+#include <QDebug>
 #include <QGridLayout>
 #include <QLabel>
 
@@ -43,6 +44,7 @@ QPair<QString, QString> AngleSelector::mobile() const
 
 void AngleSelector::setFixed(QPair<QString, QString> value)
 {
+    qDebug() << "[angleselector] fixed segment set to" << value.first << value.second;
     _fixedSelector->setProximal(value.first);
     _fixedSelector->setDistal(value.second);
 }
@@ -61,6 +63,7 @@ void AngleSelector::setLabels(QString fixed, QString mobile)
 
 void AngleSelector::setMobile(QPair<QString, QString> value)
 {
+    qDebug() << "[angleselector] mobile segment set to" << value.first << value.second;
     _mobileSelector->setProximal(value.first);
     _mobileSelector->setDistal(value.second);
 }

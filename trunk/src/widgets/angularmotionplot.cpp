@@ -1,5 +1,7 @@
 #include "angularmotionplot.h"
 
+#include <QDebug>
+
 AngularMotionPlot::AngularMotionPlot(QWidget * parent): QCustomPlot(parent)
 {
     /*
@@ -32,7 +34,6 @@ AngularMotionPlot::AngularMotionPlot(QWidget * parent): QCustomPlot(parent)
     _speedAxis = yAxis2;
     _speedAxis->setVisible(false);
     _speedAxis->setLabel(tr("Speed"));
-    _speedAxis->setRange(0, 1);
     
     /*
      * Update the graphic
@@ -55,7 +56,7 @@ void AngularMotionPlot::clear()
     replot();
 }
 
-void AngularMotionPlot::drawCurve(QMap<unsigned int, double> data, QString name, QPen pen, QCPAxis * x, QCPAxis * y)
+void AngularMotionPlot::drawCurve(QMap<unsigned int, double> data, QString name, QPen pen, QCPAxis * keyAxis, QCPAxis * valueAxis, bool rescaleValueAxis)
 {
     /* 
      * Initialize the "old" key
@@ -65,13 +66,14 @@ void AngularMotionPlot::drawCurve(QMap<unsigned int, double> data, QString name,
     /*
      * Create the first graph, who will be the only one to be displayed on the legend
      */
-    QCPGraph * graph = addGraph(x, y);
+    QCPGraph * graph = addGraph(keyAxis, valueAxis);
     graph->setPen(pen);
     graph->setName(name);
     
     /*
      * Iterate throught the data
      */
+    unsigned int max = data.begin().key();
     for(QMap<unsigned int, double>::iterator it = data.begin(); it != data.end(); it++)
     {
         /*
@@ -79,7 +81,7 @@ void AngularMotionPlot::drawCurve(QMap<unsigned int, double> data, QString name,
          */
         if(it.key() != old + 1)
         {
-            graph = addGraph(x, y);
+            graph = addGraph(keyAxis, valueAxis);
             graph->removeFromLegend();
             graph->setPen(pen);
         }
@@ -89,10 +91,26 @@ void AngularMotionPlot::drawCurve(QMap<unsigned int, double> data, QString name,
          */
         graph->addData(it.key(), it.value());
         
+        /*
+         * Update max value
+         */
+        if(data.value(max) < it.value())
+        {
+            max = it.key();
+        }
+        
         /* 
          * Update the key
          */
         old = it.key();
+    }
+    
+    /*
+     * If requested, rescale the value axis
+     */
+    if(rescaleValueAxis == true)
+    {
+        valueAxis->setRange(0, data.value(max) * 1.05);
     }
     
     /*
@@ -156,5 +174,5 @@ void AngularMotionPlot::setSpeedCurve(QMap<unsigned int, double> value)
 {
     _timeAxis->setVisible(true);
     _speedAxis->setVisible(true);
-    drawCurve(value, "Speed", QPen(Qt::blue), _timeAxis, _speedAxis);
+    drawCurve(value, "Speed", QPen(Qt::blue), _timeAxis, _speedAxis, true);
 }

@@ -1,8 +1,9 @@
 #include "motiondetectorwidget.h"
 
-#include <QVBoxLayout>
+#include <QDebug>
 #include <QList>
 #include <QString>
+#include <QVBoxLayout>
 
 #include "tools/motiondetector.h"
 #include "utils/record.h"
@@ -14,28 +15,28 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
     _layout = new QVBoxLayout();
     setLayout(_layout);
     
-    _selector = new AngleSelector();
-    _layout->addWidget(_selector);
+    _angleSelector = new AngleSelector();
+    _layout->addWidget(_angleSelector);
+    QObject::connect(_angleSelector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(run()));
     
     _plot = new AngularMotionPlot();
     _layout->addWidget(_plot);
-    QObject::connect(_selector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(onSelectionChange()));
 }
 
-void MotionDetectorWidget::onSelectionChange()
+void MotionDetectorWidget::run()
 {
     _plot->clear();
-    if(!_selector->fixed().first.isEmpty() && !_selector->fixed().second.isEmpty() && !_selector->mobile().first.isEmpty() && !_selector->mobile().second.isEmpty())
+    if(!_angleSelector->fixed().first.isEmpty() && !_angleSelector->fixed().second.isEmpty() && !_angleSelector->mobile().first.isEmpty() && !_angleSelector->mobile().second.isEmpty())
     {
-        _detector.run(_selector->fixed(), _selector->mobile());
-        _plot->setAmplitudeCurve(_detector.amplitudes());
-        _plot->setSpeedCurve(_detector.speeds());
+        _motionDetector.run(_angleSelector->fixed(), _angleSelector->mobile());
+        _plot->setAmplitudeCurve(_motionDetector.amplitudes());
+        _plot->setSpeedCurve(_motionDetector.speeds());
         
-        if(_detector.detected())
+        if(_motionDetector.detected())
         {
-            _plot->setBeginLine(_detector.begin());
-            _plot->setEndLine(_detector.end());
-            _plot->setPeakLine(_detector.peak());
+            _plot->setBeginLine(_motionDetector.begin());
+            _plot->setEndLine(_motionDetector.end());
+            _plot->setPeakLine(_motionDetector.peak());
         }
     }
 }
@@ -48,10 +49,17 @@ Record * MotionDetectorWidget::record() const
 void MotionDetectorWidget::setRecord(Record * record)
 {
     _record = record;
-    _detector.setRecord(_record);
-    _selector->setItems(_record->labels());
-    _plot->clear();
+    _motionDetector.setRecord(_record);
+    _angleSelector->setItems(_record->labels());
+    _angleSelector->setFixed(_fixedDefault);
+    _angleSelector->setMobile(_mobileDefault);
     _plot->setRange(1, _record->duration());
-    
-    emit recordChanged(_record);
+    run();
+}
+
+void MotionDetectorWidget::setDefaultAngle(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
+{
+    qDebug() << "[motiondetectorwidget] got default angle (" << fixed.first << fixed.second << mobile.first << mobile.second << ")";
+    _fixedDefault = fixed;
+    _mobileDefault = mobile;
 }

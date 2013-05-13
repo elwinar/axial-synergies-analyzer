@@ -25,9 +25,9 @@ MainWindow::MainWindow(QWidget * parent): QMainWindow(parent)
     _record = 0;
     _workingFileLabel = new QLabel();
     statusBar()->addPermanentWidget(_workingFileLabel);
-    loadSettings();
     initializeMenu();
     initializeCentralWidget();
+    loadSettings();
 }
 
 MainWindow::~MainWindow()
@@ -40,6 +40,8 @@ MainWindow::~MainWindow()
 void MainWindow::initializeCentralWidget()
 {
     _recordWidget = new RecordWidget();
+    qDebug() << "[mainwindow] set the settings of recordwidget";
+    _recordWidget->setSettings(_settings);
     setCentralWidget(_recordWidget);
     
     QObject::connect(this, SIGNAL(recordLoaded(Record *)), _recordWidget, SLOT(setRecord(Record *)));
@@ -108,3 +110,4 @@ void MainWindow::setRecord(Record * record)
     }
     _record = record;
 }
+ 
