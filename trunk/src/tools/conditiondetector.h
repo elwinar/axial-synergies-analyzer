@@ -5,17 +5,17 @@
 
 class Record;
 
+/**
+ * A tool which detects the experimental condition of a given record.
+ */
 class ConditionDetector
 {
 public:
-	ConditionDetector(Record * record);
-	void detectCondition();
-	QString condition();
-
-private:
-	QString _condition;
-	Record * _record;
-
+    /**
+	 * Detects the experimental condition.
+     * @return the detected condition, or an explicit string if none has been detected.
+     */
+	static QString detect(Record * record);	
 };
 
 #endif // CONDITION_DETECTOR_H
