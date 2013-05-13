@@ -29,7 +29,6 @@ void RecordWidget::setRecord(Record * value)
 
 void RecordWidget::setSettings(QSettings * value)
 {
-    qDebug() << "[recordwidget] got settings (" << value << ")";
     _settings = value;
     if(_settings != 0)
     {

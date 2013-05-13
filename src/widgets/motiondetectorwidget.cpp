@@ -1,7 +1,12 @@
 #include "motiondetectorwidget.h"
 
 #include <QDebug>
+#include <QHBoxLayout>
+#include <QFile>
 #include <QList>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QSpinBox>
 #include <QString>
 #include <QVBoxLayout>
 
@@ -17,10 +22,38 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
     
     _angleSelector = new AngleSelector();
     _layout->addWidget(_angleSelector);
+    _layout->setStretchFactor(_angleSelector, 0);
     QObject::connect(_angleSelector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(run()));
     
     _plot = new AngularMotionPlot();
     _layout->addWidget(_plot);
+    _layout->setStretchFactor(_plot, 1);
+    
+    QHBoxLayout * spinBoxesLayout = new QHBoxLayout();
+    _beginSpinBox = new QSpinBox();
+    _peakSpinBox = new QSpinBox();
+    _endSpinBox = new QSpinBox();
+    spinBoxesLayout->addWidget(_beginSpinBox);
+    spinBoxesLayout->addWidget(_peakSpinBox);
+    spinBoxesLayout->addWidget(_endSpinBox);
+    _layout->addLayout(spinBoxesLayout);
+    _layout->setStretchFactor(spinBoxesLayout, 0);
+    QObject::connect(_beginSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged()));
+    QObject::connect(_peakSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged()));
+    QObject::connect(_endSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged()));
+    
+    QPushButton * _saveButton = new QPushButton(tr("Save"));
+    _saveButton->setShortcut(QKeySequence("Ctrl+S"));
+    _layout->addWidget(_saveButton);
+    _layout->setStretchFactor(_saveButton, 0);
+    QObject::connect(_saveButton, SIGNAL(clicked()), this, SLOT(save()));
+}
+
+void MotionDetectorWidget::onSpinBoxValueChanged()
+{
+    _plot->setBeginLine(_beginSpinBox->value());
+    _plot->setPeakLine(_peakSpinBox->value());
+    _plot->setEndLine(_endSpinBox->value());
 }
 
 void MotionDetectorWidget::run()
@@ -34,9 +67,9 @@ void MotionDetectorWidget::run()
         
         if(_motionDetector.detected())
         {
-            _plot->setBeginLine(_motionDetector.begin());
-            _plot->setEndLine(_motionDetector.end());
-            _plot->setPeakLine(_motionDetector.peak());
+            _beginSpinBox->setValue(_motionDetector.begin());
+            _peakSpinBox->setValue(_motionDetector.peak());
+            _endSpinBox->setValue(_motionDetector.end());
         }
     }
 }
@@ -44,6 +77,25 @@ void MotionDetectorWidget::run()
 Record * MotionDetectorWidget::record() const
 {
     return _record;
+}
+
+void MotionDetectorWidget::save()
+{
+    if(_motionDetector.detected())
+    {
+        QFile file("save.csv");
+        file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
+        QTextStream out(&file);
+        
+        double amplitude = abs(_motionDetector.amplitudes().value(_beginSpinBox->value()) - _motionDetector.amplitudes().value(_endSpinBox->value()));
+        double duration = _beginSpinBox->value() - _endSpinBox->value();
+        
+        out << _record->filename() << "," << _angleSelector->mobile().first << "," << _angleSelector->mobile().second << "," << duration << "," << amplitude << "," << (amplitude / duration) << "\n";
+    }
+    else
+    {
+        QMessageBox::warning(this, tr("No motion detected"), tr("No motion has been detected, so there is nothing to save"));
+    }
 }
 
 void MotionDetectorWidget::setRecord(Record * record)
@@ -54,12 +106,16 @@ void MotionDetectorWidget::setRecord(Record * record)
     _angleSelector->setFixed(_fixedDefault);
     _angleSelector->setMobile(_mobileDefault);
     _plot->setRange(1, _record->duration());
+    _beginSpinBox->setRange(1, _record->duration());
+    _peakSpinBox->setRange(1, _record->duration());
+    _endSpinBox->setRange(1, _record->duration());
     run();
+    
+    emit recordChanged(_record);
 }
 
 void MotionDetectorWidget::setDefaultAngle(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
 {
-    qDebug() << "[motiondetectorwidget] got default angle (" << fixed.first << fixed.second << mobile.first << mobile.second << ")";
     _fixedDefault = fixed;
     _mobileDefault = mobile;
 }
