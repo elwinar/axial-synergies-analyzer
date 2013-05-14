@@ -10,7 +10,6 @@
 #include <QString>
 #include <QVBoxLayout>
 
-// #include "tools/conditiondetector.h"
 #include "tools/motiondetector.h"
 #include "utils/record.h"
 #include "widgets/angleselector.h"
@@ -103,16 +102,22 @@ void MotionDetectorWidget::save()
 		double endTime = _endSpinBox->value();
 		double endAmplitude = _motionDetector.amplitudes().value(_endSpinBox->value());
 		double endSpeed = _motionDetector.speeds().value(_endSpinBox->value());
-		
-		// QString condition = ConditionDetector::detect(_record);
         
         out << _record->filename() << "," 
-		<< _angleSelector->mobile().first << "," << _angleSelector->mobile().second << "," 
-		// << condition << "," 
-		<< duration << "," << amplitude << "," << speed << ","
-		<< beginTime << "," << beginAmplitude << "," << beginSpeed << ","
-		<< peakTime << "," << peakAmplitude << "," << peakSpeed << ","
-		<< endTime << "," << endAmplitude << "," << endSpeed << "\n";
+            << _angleSelector->mobile().first << ","
+            << _angleSelector->mobile().second << "," 
+            << duration << ","
+            << amplitude << ","
+            << speed << ","
+            << beginTime << ","
+            << beginAmplitude << ","
+            << beginSpeed << ","
+            << peakTime << ","
+            << peakAmplitude << ","
+            << peakSpeed << ","
+            << endTime << ","
+            << endAmplitude << ","
+            << endSpeed << "\n";
 		
     }
     else
