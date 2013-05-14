@@ -23,7 +23,6 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
     _angleSelector = new AngleSelector();
     _layout->addWidget(_angleSelector);
     _layout->setStretchFactor(_angleSelector, 0);
-    QObject::connect(_angleSelector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(run()));
     
     _plot = new AngularMotionPlot();
     _layout->addWidget(_plot);
@@ -38,9 +37,9 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
     spinBoxesLayout->addWidget(_endSpinBox);
     _layout->addLayout(spinBoxesLayout);
     _layout->setStretchFactor(spinBoxesLayout, 0);
-    QObject::connect(_beginSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged()));
-    QObject::connect(_peakSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged()));
-    QObject::connect(_endSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged()));
+    QObject::connect(_beginSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onBeginSpinBoxValueChanged(int)));
+    QObject::connect(_peakSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onPeakSpinBoxValueChanged(int)));
+    QObject::connect(_endSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onEndSpinBoxValueChanged(int)));
     
     QPushButton * _saveButton = new QPushButton(tr("Save"));
     _saveButton->setShortcut(QKeySequence("Ctrl+S"));
@@ -49,24 +48,38 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
     QObject::connect(_saveButton, SIGNAL(clicked()), this, SLOT(save()));
 }
 
-void MotionDetectorWidget::onSpinBoxValueChanged()
+void MotionDetectorWidget::onBeginSpinBoxValueChanged(int value)
 {
-    _plot->setBeginLine(_beginSpinBox->value());
-    _plot->setPeakLine(_peakSpinBox->value());
-    _plot->setEndLine(_endSpinBox->value());
+    qDebug() << "set begin" << value;
+    _plot->setBeginLine(value);
+}
+
+void MotionDetectorWidget::onPeakSpinBoxValueChanged(int value)
+{
+    qDebug() << "set peak" << value;
+    _plot->setPeakLine(value);
+}
+
+void MotionDetectorWidget::onEndSpinBoxValueChanged(int value)
+{
+    qDebug() << "set end" << value;
+    _plot->setEndLine(value);
 }
 
 void MotionDetectorWidget::run()
 {
     _plot->clear();
+    
     if(!_angleSelector->fixed().first.isEmpty() && !_angleSelector->fixed().second.isEmpty() && !_angleSelector->mobile().first.isEmpty() && !_angleSelector->mobile().second.isEmpty())
     {
+        qDebug() << _angleSelector->fixed() << _angleSelector->mobile();
         _motionDetector.run(_angleSelector->fixed(), _angleSelector->mobile());
         _plot->setAmplitudeCurve(_motionDetector.amplitudes());
         _plot->setSpeedCurve(_motionDetector.speeds());
         
         if(_motionDetector.detected())
         {
+            qDebug() << "detected" << _motionDetector.begin() << _motionDetector.peak() << _motionDetector.end();
             _beginSpinBox->setValue(_motionDetector.begin());
             _peakSpinBox->setValue(_motionDetector.peak());
             _endSpinBox->setValue(_motionDetector.end());
@@ -89,19 +102,19 @@ void MotionDetectorWidget::save()
         
         double duration = _endSpinBox->value() - _beginSpinBox->value();
         double amplitude = abs(_motionDetector.amplitudes().value(_beginSpinBox->value()) - _motionDetector.amplitudes().value(_endSpinBox->value()));
-		double speed = (amplitude / duration);
-		
-		double beginTime = _beginSpinBox->value();
-		double beginAmplitude = _motionDetector.amplitudes().value(_beginSpinBox->value());
-		double beginSpeed = _motionDetector.speeds().value(_beginSpinBox->value());
-		
-		double peakTime = _peakSpinBox->value();
-		double peakAmplitude = _motionDetector.amplitudes().value(_peakSpinBox->value());
-		double peakSpeed = _motionDetector.speeds().value(_peakSpinBox->value());
-		
-		double endTime = _endSpinBox->value();
-		double endAmplitude = _motionDetector.amplitudes().value(_endSpinBox->value());
-		double endSpeed = _motionDetector.speeds().value(_endSpinBox->value());
+        double speed = (amplitude / duration);
+        
+        double beginTime = _beginSpinBox->value();
+        double beginAmplitude = _motionDetector.amplitudes().value(_beginSpinBox->value());
+        double beginSpeed = _motionDetector.speeds().value(_beginSpinBox->value());
+        
+        double peakTime = _peakSpinBox->value();
+        double peakAmplitude = _motionDetector.amplitudes().value(_peakSpinBox->value());
+        double peakSpeed = _motionDetector.speeds().value(_peakSpinBox->value());
+        
+        double endTime = _endSpinBox->value();
+        double endAmplitude = _motionDetector.amplitudes().value(_endSpinBox->value());
+        double endSpeed = _motionDetector.speeds().value(_endSpinBox->value());
         
         out << _record->filename() << "," 
             << _angleSelector->mobile().first << ","
@@ -118,7 +131,7 @@ void MotionDetectorWidget::save()
             << endTime << ","
             << endAmplitude << ","
             << endSpeed << "\n";
-		
+                
     }
     else
     {
@@ -128,6 +141,14 @@ void MotionDetectorWidget::save()
 
 void MotionDetectorWidget::setRecord(Record * record)
 {
+    /*
+     * Disconnect the signal
+     */
+    QObject::disconnect(_angleSelector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(run()));
+    
+    /*
+     * Set the record and 
+     */
     _record = record;
     _motionDetector.setRecord(_record);
     _angleSelector->setItems(_record->labels());
@@ -137,7 +158,9 @@ void MotionDetectorWidget::setRecord(Record * record)
     _beginSpinBox->setRange(1, _record->duration());
     _peakSpinBox->setRange(1, _record->duration());
     _endSpinBox->setRange(1, _record->duration());
+    
     run();
+    QObject::connect(_angleSelector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(run()));
     
     emit recordChanged(_record);
 }
