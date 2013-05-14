@@ -30,7 +30,9 @@ public slots:
     void setDefaultAngle(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
     
 protected slots:
-    void onSpinBoxValueChanged();
+    void onBeginSpinBoxValueChanged(int value);
+    void onEndSpinBoxValueChanged(int value);
+    void onPeakSpinBoxValueChanged(int value);
 
 signals:
     void recordChanged(Record * record);
