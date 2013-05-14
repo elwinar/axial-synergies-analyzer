@@ -10,6 +10,7 @@
 #include <QString>
 #include <QVBoxLayout>
 
+// #include "tools/conditiondetector.h"
 #include "tools/motiondetector.h"
 #include "utils/record.h"
 #include "widgets/angleselector.h"
@@ -87,10 +88,32 @@ void MotionDetectorWidget::save()
         file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
         QTextStream out(&file);
         
+        double duration = _endSpinBox->value() - _beginSpinBox->value();
         double amplitude = abs(_motionDetector.amplitudes().value(_beginSpinBox->value()) - _motionDetector.amplitudes().value(_endSpinBox->value()));
-        double duration = _beginSpinBox->value() - _endSpinBox->value();
+		double speed = (amplitude / duration);
+		
+		double beginTime = _beginSpinBox->value();
+		double beginAmplitude = _motionDetector.amplitudes().value(_beginSpinBox->value());
+		double beginSpeed = _motionDetector.speeds().value(_beginSpinBox->value());
+		
+		double peakTime = _peakSpinBox->value();
+		double peakAmplitude = _motionDetector.amplitudes().value(_peakSpinBox->value());
+		double peakSpeed = _motionDetector.speeds().value(_peakSpinBox->value());
+		
+		double endTime = _endSpinBox->value();
+		double endAmplitude = _motionDetector.amplitudes().value(_endSpinBox->value());
+		double endSpeed = _motionDetector.speeds().value(_endSpinBox->value());
+		
+		// QString condition = ConditionDetector::detect(_record);
         
-        out << _record->filename() << "," << _angleSelector->mobile().first << "," << _angleSelector->mobile().second << "," << duration << "," << amplitude << "," << (amplitude / duration) << "\n";
+        out << _record->filename() << "," 
+		<< _angleSelector->mobile().first << "," << _angleSelector->mobile().second << "," 
+		// << condition << "," 
+		<< duration << "," << amplitude << "," << speed << ","
+		<< beginTime << "," << beginAmplitude << "," << beginSpeed << ","
+		<< peakTime << "," << peakAmplitude << "," << peakSpeed << ","
+		<< endTime << "," << endAmplitude << "," << endSpeed << "\n";
+		
     }
     else
     {
