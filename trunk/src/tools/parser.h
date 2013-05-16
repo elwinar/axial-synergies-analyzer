@@ -14,6 +14,11 @@ public:
      * Parse a file to get a record
      */
     static Record * parse(QFile * file);
+	
+    /**
+     * Parse a file to get a record of analog datas
+     */
+	static Record * analogSignal(QFile * file);
 };
 
 #endif // PARSER_H

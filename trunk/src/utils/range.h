@@ -3,6 +3,8 @@
 
 #include <QMap>
 
+#include "analogdata.h"
+
 /**
  * Represents a portion of an emg record.
  */
@@ -12,10 +14,10 @@ public:
 	/**
 	 * Creates a Range in the EMG map between position begin and position end. The level is calculated from EMG.
 	 */
-	Range(QMap<unsigned int, double> * emg, int begin, int end);
+	Range(AnalogData * emg, int begin, int end);
 	
 	/**
-	 * @return the current level value.
+	 * @return the current level value, corresponding to the mean signal within the range
 	 */
 	double level() const;
 	
