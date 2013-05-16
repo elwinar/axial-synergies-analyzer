@@ -17,6 +17,7 @@ AngleSelector::AngleSelector(QWidget * parent): QWidget(parent)
     _fixedSelector = new SegmentSelector();
     _layout->addWidget(_fixedSelector, 0, 1, 1, 2);
     QObject::connect(_fixedSelector, SIGNAL(selectionChanged(QString, QString)), this, SLOT(onSelectionChange()));
+    QObject::connect(_fixedSelector, SIGNAL(valueChanged(QString, QString)), this, SLOT(onValueChange()));
     
     _mobileLabel = new QLabel(tr("Mobile segment"));
     _layout->addWidget(_mobileLabel, 1, 0);
@@ -24,6 +25,7 @@ AngleSelector::AngleSelector(QWidget * parent): QWidget(parent)
     _mobileSelector = new SegmentSelector();
     _layout->addWidget(_mobileSelector, 1, 1, 1, 2);
     QObject::connect(_mobileSelector, SIGNAL(selectionChanged(QString, QString)), this, SLOT(onSelectionChange()));
+    QObject::connect(_mobileSelector, SIGNAL(valueChanged(QString, QString)), this, SLOT(onValueChange()));
 }
 
     
@@ -35,6 +37,11 @@ QPair<QString, QString> AngleSelector::fixed() const
 void AngleSelector::onSelectionChange()
 {
     emit selectionChanged(fixed(), mobile());
+}
+
+void AngleSelector::onValueChange()
+{
+    emit valueChanged(fixed(), mobile());
 }
 
 QPair<QString, QString> AngleSelector::mobile() const
@@ -64,4 +71,9 @@ void AngleSelector::setMobile(QPair<QString, QString> value)
 {
     _mobileSelector->setProximal(value.first);
     _mobileSelector->setDistal(value.second);
+}
+
+bool AngleSelector::valid() const
+{
+    return _fixedSelector->valid() && _mobileSelector->valid();
 }
