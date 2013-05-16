@@ -17,6 +17,7 @@ HEADERS += src/libs/qcustomplot.h \
            src/tools/motiondetector.h \
            src/tools/parser.h \
            src/tools/conditiondetector.h \
+           src/utils/analogdata.h \
            src/utils/angle.h \
            src/utils/marker.h \
            src/utils/pi.h \
@@ -35,6 +36,7 @@ SOURCES += src/main.cpp \
            src/tools/motiondetector.cpp \
            src/tools/parser.cpp \
            src/tools/conditiondetector.cpp \
+           src/utils/analogdata.cpp \
            src/utils/angle.cpp \
            src/utils/marker.cpp \
            src/utils/point.cpp \

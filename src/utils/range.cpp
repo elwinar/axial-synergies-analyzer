@@ -1,16 +1,15 @@
 #include "range.h"
 
-Range::Range(QMap<unsigned int, double> * emg, int begin, int end) : _begin(begin), _end(end)
+Range::Range(AnalogData * emg, int begin, int end) : _begin(begin), _end(end)
 {
 	double sum = 0;
-	for(int i = _begin; i <= _end; i++)
+	for(int it = _begin; it <= _end; it++)
 	{
-		sum+= emg->value(i);
+		sum+= emg->signal(it);
 	}
-	_level = sum / (_end - _begin);
 }
 
 double Range::level() const
 {
-	return _level;
+	return _level / (_end - _begin);
 }
