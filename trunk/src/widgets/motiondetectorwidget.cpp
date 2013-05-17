@@ -14,6 +14,7 @@
 #include "utils/record.h"
 #include "widgets/angleselector.h"
 #include "widgets/angularmotionplot.h"
+#include "widgets/planselector.h"
 
 MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
 {
@@ -25,6 +26,11 @@ MotionDetectorWidget::MotionDetectorWidget(QWidget * parent): QWidget(parent)
     _layout->setStretchFactor(_angleSelector, 0);
     QObject::connect(_angleSelector, SIGNAL(selectionChanged(QPair<QString, QString>, QPair<QString, QString>)), this, SLOT(run()));
     
+    _planSelector = new PlanSelector();
+    _layout->addWidget(_planSelector);
+    _layout->setStretchFactor(_planSelector, 0);
+    QObject::connect(_planSelector, SIGNAL(selectionChanged(int)), this, SLOT(run()));
+	
     _plot = new AngularMotionPlot();
     _layout->addWidget(_plot);
     _layout->setStretchFactor(_plot, 1);
@@ -68,9 +74,9 @@ void MotionDetectorWidget::run()
 {
     _plot->clear();
     
-    if(_angleSelector->valid())
+    if(_angleSelector->valid() && _planSelector->valid())
     {
-        _motionDetector.run(_angleSelector->fixed(), _angleSelector->mobile());
+        _motionDetector.run(_angleSelector->fixed(), _angleSelector->mobile(), _planSelector->plan());
         _plot->setAmplitudeCurve(_motionDetector.amplitudes());
         _plot->setSpeedCurve(_motionDetector.speeds());
         
@@ -141,6 +147,8 @@ void MotionDetectorWidget::setRecord(Record * record)
     _angleSelector->setItems(_record->labels());
     _angleSelector->setFixed(_fixedDefault);
     _angleSelector->setMobile(_mobileDefault);
+	_planSelector->setItems();
+	_planSelector->setPlan(_planDefault);
     _plot->setRange(1, _record->duration());
     _beginSpinBox->setRange(1, _record->duration());
     _peakSpinBox->setRange(1, _record->duration());
@@ -155,4 +163,9 @@ void MotionDetectorWidget::setDefaultAngle(QPair<QString, QString> fixed, QPair<
 {
     _fixedDefault = fixed;
     _mobileDefault = mobile;
+}
+
+void MotionDetectorWidget::setDefaultPlan(int plan)
+{
+	_planDefault = plan;
 }

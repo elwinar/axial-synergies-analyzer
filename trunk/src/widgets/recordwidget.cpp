@@ -36,6 +36,8 @@ void RecordWidget::setSettings(QSettings * value)
         QString fixedDistal = _settings->value("motiondetector/fixed_distal", QString()).toString();
         QString mobileProximal = _settings->value("motiondetector/mobile_proximal", QString()).toString();
         QString mobileDistal = _settings->value("motiondetector/mobile_distal", QString()).toString();
+		int plan = _settings->value("motiondetector/plan", QString()).toInt();
         _motionDetectorWidget->setDefaultAngle(QPair<QString, QString>(fixedProximal, fixedDistal), QPair<QString, QString>(mobileProximal, mobileDistal));
+        _motionDetectorWidget->setDefaultPlan(plan);
     }
 }

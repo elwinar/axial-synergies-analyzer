@@ -31,6 +31,7 @@ HEADERS += src/libs/qcustomplot.h \
            src/widgets/mainwindow.h \
            src/widgets/motiondetectorwidget.h \
            src/widgets/recordwidget.h \
+           src/widgets/planselector.h \
            src/widgets/segmentselector.h
 SOURCES += src/main.cpp \
            src/libs/qcustomplot.cpp \
@@ -50,4 +51,5 @@ SOURCES += src/main.cpp \
            src/widgets/mainwindow.cpp \
            src/widgets/motiondetectorwidget.cpp \
            src/widgets/recordwidget.cpp \
+           src/widgets/planselector.cpp \
            src/widgets/segmentselector.cpp
