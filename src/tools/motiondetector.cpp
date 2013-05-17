@@ -53,7 +53,7 @@ bool MotionDetector::ran() const
     return _ran;
 }
 
-bool MotionDetector::run(QPair<QString, QString> fixed, QPair<QString, QString> mobile)
+bool MotionDetector::run(QPair<QString, QString> fixed, QPair<QString, QString> mobile, int plan)
 {
     Q_ASSERT(_record != 0);
     
@@ -80,7 +80,8 @@ bool MotionDetector::run(QPair<QString, QString> fixed, QPair<QString, QString> 
     {
         if(fixedProximal.exists(time) && fixedDistal.exists(time) && mobileProximal.exists(time) && mobileDistal.exists(time))
         {
-            _amplitudes.insert(time, Angle(Vector(fixedProximal.point(time), fixedDistal.point(time)), Vector(mobileProximal.point(time), mobileDistal.point(time))).amplitude());
+            _amplitudes.insert(time, Angle(Vector(fixedProximal.point(time), fixedDistal.point(time)), 
+				Vector(mobileProximal.point(time), mobileDistal.point(time)), plan).amplitude());
         }
     }
     

@@ -8,6 +8,7 @@
 #include "tools/motiondetector.h"
 
 class AngleSelector;
+class PlanSelector;
 class AngularMotionPlot;
 class QPushButton;
 class QSpinBox;
@@ -50,6 +51,11 @@ public slots:
      * Set the default selected angle
      */
     void setDefaultAngle(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
+	
+	/**
+	 * Set the default selected plan
+	 */
+	void setDefaultPlan(int plan);
     
 protected slots:
     /**
@@ -72,6 +78,7 @@ signals:
     
 private:
     AngleSelector * _angleSelector;
+	PlanSelector * _planSelector;
     QSpinBox * _beginSpinBox;
     QSpinBox * _endSpinBox;
     QPair<QString, QString> _fixedDefault;
@@ -82,6 +89,7 @@ private:
     AngularMotionPlot * _plot;
     Record * _record;
     QPushButton * _saveButton;
+	int _planDefault;
 };
 
 #endif // MOTION_DETECTOR_WIDGET_H

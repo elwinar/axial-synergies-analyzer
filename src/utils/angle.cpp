@@ -20,8 +20,7 @@ Angle::~Angle()
 
 double Angle::amplitude() const
 {
-	qDebug() << _plan;
-	double amplitude;
+	double amplitude = 0;
 	
 	/*
 	 * the angle is analyzed as a 3D angle. This cannot be use to calculate the motion amplitude, 

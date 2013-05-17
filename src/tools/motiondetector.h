@@ -44,7 +44,7 @@ public:
      * 
      * @return True if a motion has been detected, whether the detection has been run and found nothing or hadn't been run.
      */
-    bool run(QPair<QString, QString> fixed, QPair<QString, QString> mobile);
+    bool run(QPair<QString, QString> fixed, QPair<QString, QString> mobile, int plan);
     
     /**
      * Check if a motion has been detected, whether the detection has been run and found nothing or hadn't been run.
