@@ -12,8 +12,8 @@ public:
     /**
      * Create an angle with the given fixed vector as reference vector and the given mobile vector as branch vector
      */
-    Angle(Vector fixed = Vector(), Vector mobile = Vector());
-    
+    Angle(Vector fixed = Vector(), Vector mobile = Vector(), int plan = YZ);
+	
     /**
      * Destroy the angle
      */
@@ -43,10 +43,16 @@ public:
      * Set the mobile vector of the angle
      */
     void setMobile(Vector second);
+	
+	static const int SPACE = 1; // 3D angle
+	static const int XY = 2; // transversal plan
+	static const int YZ = 3; // sagittal plan
+	static const int ZX = 4; // frontal plan
     
 private:
     Vector _fixed;
     Vector _mobile;
+	int _plan;
 };
 
 #endif // ANGLE_H

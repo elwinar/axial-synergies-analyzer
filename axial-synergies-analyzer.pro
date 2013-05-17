@@ -21,6 +21,7 @@ HEADERS += src/libs/qcustomplot.h \
            src/utils/angle.h \
            src/utils/marker.h \
            src/utils/pi.h \
+           src/utils/trigonometry.h \
            src/utils/point.h \
            src/utils/range.h \
            src/utils/record.h \
@@ -39,6 +40,7 @@ SOURCES += src/main.cpp \
            src/utils/analogdata.cpp \
            src/utils/angle.cpp \
            src/utils/marker.cpp \
+           src/utils/trigonometry.cpp \
            src/utils/point.cpp \
            src/utils/range.cpp \
            src/utils/record.cpp \
