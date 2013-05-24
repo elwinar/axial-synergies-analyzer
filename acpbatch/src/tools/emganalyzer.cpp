@@ -98,36 +98,31 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
         }
     }
     
-    double minMean;
-    double minIndex;
-    
     if(ranges.empty())
     {
         qDebug() << "[emg] none found, logging error";
-        out << ",N/A,N/A" << "\n";
+        out << "," << "error" << "\n";
         qDebug() << "[emg] stop";
         return;
     }
-    else
-    {
-        qDebug() << "[emg] computing minimal stable window";
-        
-        minMean = computeRangeMean(ranges.front(), range_width, speeds);
-        minIndex = ranges.front();
-        for(int i = 1; i < ranges.size(); i++)
-        {
-            double mean = computeRangeMean(ranges[i], range_width, speeds);
-            if(mean < minMean)
-            {
-                minMean = mean;
-                minIndex = ranges[i];
-            }
-        }
     
-        out << "," << minIndex * 10
-            << "," << (minIndex + range_width) * 10;
+    qDebug() << "[emg] computing minimal stable window";
+    
+    double minMean = computeRangeMean(ranges.front(), range_width, speeds);
+    double minIndex = ranges.front();
+    for(int i = 1; i < ranges.size(); i++)
+    {
+        double mean = computeRangeMean(ranges[i], range_width, speeds);
+        if(mean < minMean)
+        {
+            minMean = mean;
+            minIndex = ranges[i];
+        }
     }
-    out << "," << begin * 10
+    
+    out << "," << minIndex * 10
+        << "," << (minIndex + range_width) * 10
+        << "," << begin * 10
         << "," << (begin + beginWidth) * 10
         << "," << end * 10
         << "," << (end + endWidth) * 10;
@@ -139,16 +134,8 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
         if(_record->containsAnalogdata(QString("ZW%1").arg(i)))
         {
             qDebug() << "[emg]" << QString("ZW%1").arg(i) << "found, computing values";
-            if(ranges.empty())
-            {
-                out << ",N/A";
-            }
-            else
-            {
-                qDebug() << "[emg] TS";
-                out << "," << computeEMGMean(minIndex * 10, range_width * 10, _record->analogdata(QString("ZW%1").arg(i)));
-            }
-            
+            qDebug() << "[emg] TS";
+            out << "," << computeEMGMean(minIndex * 10, range_width * 10, _record->analogdata(QString("ZW%1").arg(i)));
             qDebug() << "[emg] T1";
             out << "," << computeEMGMean(begin * 10, beginWidth * 2 * 10, _record->analogdata(QString("ZW%1").arg(i)));
             qDebug() << "[emg] T2";
