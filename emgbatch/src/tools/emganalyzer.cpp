@@ -3,9 +3,9 @@
 #include <QApplication>
 
 #define RANGE_STEP 5
-#define RANGE_MARGIN 10
+#define RANGE_MARGIN 2
 #define RANGE_WIDTH 20
-#define RANGE_WIDTH_MIN 5
+#define RANGE_WIDTH_MIN 2
 #define RANGE_WIDTH_DECREASE_FACTOR 0.5
 
 #define RANGE_RADIUS 10
@@ -17,7 +17,7 @@
 
 void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
 {
-    qDebug() << "[emg] start";
+    // qDebug() << "[emg] start";
     QSettings settings(QApplication::applicationFilePath().append(".ini"), QSettings::IniFormat);
     MotionDetector motionDetector(_record);
     
@@ -31,24 +31,24 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     unsigned int range_width = RANGE_WIDTH / RANGE_WIDTH_DECREASE_FACTOR;
     unsigned int range_margin = RANGE_MARGIN;
     
-    qDebug() << "[emg] computing speeds";
+    // qDebug() << "[emg] computing speeds";
     
     motionDetector.run(QPair<QString, QString>("O", "Z"), QPair<QString, QString>("LTRO", "LSHO"), Angle::SPACE);
     QMap<unsigned int, double> speeds = motionDetector.speeds();
     
-    qDebug() << "[emg] computing stable windows";
+    // qDebug() << "[emg] computing stable windows";
     while(ranges.empty() && range_width > RANGE_WIDTH_MIN)
     {
         range_width *= RANGE_WIDTH_DECREASE_FACTOR;
         if(begin > range_width + range_margin)
         {
-            qDebug() << "[emg] trying with a width of" << range_width;
+            // qDebug() << "[emg] trying with a width of" << range_width;
             for(unsigned int i = 1; i < begin - range_width - range_margin;)
             {
                 unsigned int start = i;
-                qDebug() << "[emg] starting at index" << start;
+                // qDebug() << "[emg] starting at index" << start;
                 for(; i < begin - range_margin && speeds.contains(i); i++);
-                qDebug() << "[emg] went until index" << i;
+                // qDebug() << "[emg] went until index" << i;
                 if(i >= range_width)
                 {
                     for(; start < i - range_width; start += RANGE_STEP)
@@ -56,7 +56,7 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
                         ranges.push_back(start);
                     }
                 }
-                qDebug() << "[emg] skiping holes";
+                // qDebug() << "[emg] skiping holes";
                 for(; i < begin - range_width - range_margin && !speeds.contains(i); i++);
             }
         }
@@ -64,7 +64,7 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     
     if(ranges.empty())
     {
-        qDebug() << "[emg] none found, trying right side";
+        // qDebug() << "[emg] none found, trying right side";
         
         range_width = RANGE_WIDTH / RANGE_WIDTH_DECREASE_FACTOR;
         range_margin = RANGE_MARGIN;
@@ -77,13 +77,13 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
             range_width *= RANGE_WIDTH_DECREASE_FACTOR;
             if(begin > range_width + range_margin)
             {
-                qDebug() << "[emg] trying with a width of" << range_width;
+                // qDebug() << "[emg] trying with a width of" << range_width;
                 for(unsigned int i = 1; i < begin - range_width - range_margin;)
                 {
                     unsigned int start = i;
-                    qDebug() << "[emg] starting at index" << start;
+                    // qDebug() << "[emg] starting at index" << start;
                     for(; i < begin - range_margin && speeds.contains(i); i++);
-                    qDebug() << "[emg] went until index" << i;
+                    // qDebug() << "[emg] went until index" << i;
                     if(i >= range_width)
                     {
                         for(; start < i - range_width; start += RANGE_STEP)
@@ -91,7 +91,43 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
                             ranges.push_back(start);
                         }
                     }
-                    qDebug() << "[emg] skiping holes";
+                    // qDebug() << "[emg] skiping holes";
+                    for(; i < begin - range_width - range_margin && !speeds.contains(i); i++);
+                }
+            }
+        }
+    }
+    
+    if(ranges.empty())
+    {
+        // qDebug() << "[emg] none found, trying another set";
+        
+        range_width = RANGE_WIDTH / RANGE_WIDTH_DECREASE_FACTOR;
+        range_margin = RANGE_MARGIN;
+        
+        motionDetector.run(QPair<QString, QString>("O", "Z"), QPair<QString, QString>("RASI", "C7"), Angle::SPACE);
+        speeds = motionDetector.speeds();
+        
+        while(ranges.empty() && range_width > RANGE_WIDTH_MIN)
+        {
+            range_width *= RANGE_WIDTH_DECREASE_FACTOR;
+            if(begin > range_width + range_margin)
+            {
+                // qDebug() << "[emg] trying with a width of" << range_width;
+                for(unsigned int i = 1; i < begin - range_width - range_margin;)
+                {
+                    unsigned int start = i;
+                    // qDebug() << "[emg] starting at index" << start;
+                    for(; i < begin - range_margin && speeds.contains(i); i++);
+                    // qDebug() << "[emg] went until index" << i;
+                    if(i >= range_width)
+                    {
+                        for(; start < i - range_width; start += RANGE_STEP)
+                        {
+                            ranges.push_back(start);
+                        }
+                    }
+                    // qDebug() << "[emg] skiping holes";
                     for(; i < begin - range_width - range_margin && !speeds.contains(i); i++);
                 }
             }
@@ -103,14 +139,13 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     
     if(ranges.empty())
     {
-        qDebug() << "[emg] none found, logging error";
-        out << ",N/A,N/A" << "\n";
-        qDebug() << "[emg] stop";
-        return;
+        // qDebug() << "[emg] none found, logging error";
+        qDebug() << "Minimal stable window [ None found ]";
+        out << ",N/A,N/A";
     }
     else
     {
-        qDebug() << "[emg] computing minimal stable window";
+        // qDebug() << "[emg] computing minimal stable window";
         
         minMean = computeRangeMean(ranges.front(), range_width, speeds);
         minIndex = ranges.front();
@@ -126,37 +161,41 @@ void EMGAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     
         out << "," << minIndex * 10
             << "," << (minIndex + range_width) * 10;
+        
+        qDebug() << "Minimal stable window [" << minIndex * 10 << "-" << (minIndex + range_width) * 10 << "]";
     }
     out << "," << begin * 10
         << "," << (begin + beginWidth) * 10
         << "," << end * 10
         << "," << (end + endWidth) * 10;
         
-    qDebug() << "[emg] begining emg analyzis";
+    // qDebug() << "[emg] begining emg analyzis";
     
     for(unsigned int i = 1; i <= 8; i++)
     {
         if(_record->containsAnalogdata(QString("ZW%1").arg(i)))
         {
-            qDebug() << "[emg]" << QString("ZW%1").arg(i) << "found, computing values";
+            // qDebug() << "[emg]" << QString("ZW%1").arg(i) << "found, computing values";
             if(ranges.empty())
             {
+                qDebug() << "[ ZW" << i << "] TS: NA";
                 out << ",N/A";
             }
             else
             {
-                qDebug() << "[emg] TS";
+                qDebug() << "[ ZW" << i << "] TS:" << computeEMGMean(minIndex * 10, range_width * 10, _record->analogdata(QString("ZW%1").arg(i)));
                 out << "," << computeEMGMean(minIndex * 10, range_width * 10, _record->analogdata(QString("ZW%1").arg(i)));
             }
             
-            qDebug() << "[emg] T1";
-            out << "," << computeEMGMean(begin * 10, beginWidth * 2 * 10, _record->analogdata(QString("ZW%1").arg(i)));
-            qDebug() << "[emg] T2";
-            out << "," << computeEMGMean(end * 10, endWidth * 2 * 10, _record->analogdata(QString("ZW%1").arg(i)));
+            qDebug() << "[ ZW" << i << "] T1:" << computeEMGMean(begin * 10, beginWidth * 10, _record->analogdata(QString("ZW%1").arg(i)));
+            out << "," << computeEMGMean(begin * 10, beginWidth * 10, _record->analogdata(QString("ZW%1").arg(i)));
+            qDebug() << "[ ZW" << i << "] T2:" << computeEMGMean(end * 10, endWidth * 10, _record->analogdata(QString("ZW%1").arg(i)));
+            out << "," << computeEMGMean(end * 10, endWidth * 10, _record->analogdata(QString("ZW%1").arg(i)));
         }
         else
         {
-            qDebug() << "[emg]" << QString("ZW%1").arg(i) << "not found";
+            // qDebug() << "[emg]" << QString("ZW%1").arg(i) << "not found";
+            qDebug() << "[ ZW" << i << "] not found";
             out << ",,,";
         }
     }
@@ -176,7 +215,7 @@ double EMGAnalyzer::computeRangeMean(unsigned int start, unsigned int width, QMa
 double EMGAnalyzer::computeEMGMean(unsigned int start, unsigned int width, AnalogData data)
 {
     double sum = 0;
-    qDebug() << "[emgmean] from" << start << "to" << (start + width);
+    // qDebug() << "[emgmean] from" << start << "to" << (start + width);
     double missing = 0;
     for(unsigned int i = start; i <= start + width; i++)
     {
