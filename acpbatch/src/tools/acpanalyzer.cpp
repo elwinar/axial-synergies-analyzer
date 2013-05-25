@@ -210,6 +210,7 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     /*
     Calculer scores
     */
+    /*
     QVector<QVector<double> > scores(centered);
     for(unsigned int row = 0; row < rows; row++)
     {
@@ -223,6 +224,7 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     }
     qDebug() << "Scores";
     print(scores);
+    */
     
     /*
     Exporter
