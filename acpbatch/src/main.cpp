@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 #include <QString>
 #include <QStringList>
+#include <QSettings>
 
 #include "utils/record.h"
 #include "tools/parser.h"
@@ -34,6 +35,7 @@ int main(int argc, char* argv[])
     QTextStream out(stdout);
     QString dir =  QCoreApplication::applicationDirPath();
     QFile motionfile(dir + "\\motion-result.csv");
+    QSettings settings(QApplication::applicationFilePath().append(".ini"), QSettings::IniFormat);
     
     if(motionfile.exists())
     {
@@ -45,22 +47,19 @@ int main(int argc, char* argv[])
         QFile acpfile(dir + "\\acp-result.csv");
         acpfile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
         QTextStream acpstream(&acpfile);
+        unsigned int angles = settings.value("angles", 0).toUInt();
         acpstream << "filename"
             << "," << "T Begin"
-            << "," << "T End"
-            << "," << "PC1"
-            << "," << "R11"
-            << "," << "R12"
-            << "," << "R13"
-            << "," << "PC2"
-            << "," << "R21"
-            << "," << "R22"
-            << "," << "R23"
-            << "," << "PC3"
-            << "," << "R31"
-            << "," << "R32"
-            << "," << "R33"
-            << "\n";
+            << "," << "T End";
+        for(unsigned int i = 1; i <= angles; i++)
+        {
+            acpstream << ",PC" << i;
+            for(unsigned int j = 1; j <= angles; j++)
+            {
+                acpstream << ",R" << i << j;
+            }
+        }
+        acpstream << "\n";
         
         motionstream.readLine();
         while(!motionstream.atEnd())

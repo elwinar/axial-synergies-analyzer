@@ -35,6 +35,8 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
         begin -= onset;
     }
     end += offset;
+    out << "," << begin
+        << "," << end;
     
     /*
     Choisir jeu d'angles
@@ -102,6 +104,13 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     if(chosen_set == 0)
     {
         qDebug() << "No eligible set found";
+        for(unsigned int i = 0; i < angles; i++)
+        {
+            for(unsigned int j = 0; j < angles + 1; j++)
+            {
+                out << ",N/A";
+            }
+        }
         return;
     }
     else
@@ -282,6 +291,14 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     /*
     Exporter
     */
+    for(unsigned int i = 0; i < cols; i++)
+    {
+        out << "," << values[i];
+        for(unsigned int j = 0; j < cols; j++)
+        {
+            out << "," << vectors[j][i];
+        }
+    }
 }
 
 void ACPAnalyzer::print(QVector<QVector<double> > matrix)
