@@ -198,7 +198,6 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     /*
     Trouver valeurs et vecteurs propres
     */
-    
     QVector<double> values(cols);
     QVector<QVector<double> > vectors(cols, QVector<double>(cols));
     eigen(covariances, values, vectors);
@@ -208,10 +207,51 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     print(vectors);
     
     /*
-    Calculer scores
+    Réorganiser valeurs et vecteurs propres
     */
+    for(unsigned int i = 0; i < cols; i++)
+    {
+        unsigned int max = i;
+        for(unsigned int j = i + 1; j < cols; j++)
+        {
+            if(values[j] > values[i])
+            {
+                max = j;
+            }
+        }
+        if(max != i)
+        {
+            {
+                double swap = values[i];
+                values[i] = values[max];
+                values[max] = swap;
+            }
+            {
+                QVector<double> swap(cols);
+                for(unsigned int j = 0; j < cols; j++)
+                {
+                    swap[j] = vectors[j][i];
+                }
+                for(unsigned int j = 0; j < cols; j++)
+                {
+                    vectors[j][i] = vectors[j][max];
+                }
+                for(unsigned int j = 0; j < cols; j++)
+                {
+                    vectors[j][max] = swap[j];
+                }
+            }
+        }
+    }
+    qDebug() << "Sorted Eigen values";
+    qDebug() << values;
+    qDebug() << "Sorted Eigen vectors";
+    print(vectors);
+    
     /*
-    QVector<QVector<double> > scores(centered);
+    Scores
+    */
+    QVector<QVector<double> > scores(rows, QVector<double>(cols));
     for(unsigned int row = 0; row < rows; row++)
     {
         for(unsigned int col = 0; col < cols; col++)
@@ -224,7 +264,20 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     }
     qDebug() << "Scores";
     print(scores);
+    
+    /*
+    Verifications
     */
+    QVector<double> totals(cols);
+    for(unsigned int row = 0; row < rows; row++)
+    {
+        for(unsigned int col = 0; col < cols; col++)
+        {
+            totals[col] += scores[row][col] * scores[row][col] / rows;
+        }
+    }
+    qDebug() << "Totals";
+    qDebug() << totals;
     
     /*
     Exporter
