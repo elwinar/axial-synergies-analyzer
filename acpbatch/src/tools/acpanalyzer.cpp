@@ -118,6 +118,7 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
                 out << ",N/A";
             }
         }
+        out << "\n";
         return;
     }
     else
