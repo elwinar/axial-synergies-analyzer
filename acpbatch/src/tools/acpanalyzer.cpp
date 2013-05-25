@@ -7,6 +7,9 @@
 #include "utils/vector.h"
 #include "utils/point.h"
 
+#include <libs/Eigen/Core>
+#include <libs/Eigen/Eigen>
+
 void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
 {
     qDebug() << "Start";
@@ -112,42 +115,160 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     */
     unsigned int rows = end - begin + 1;
     unsigned int cols = angles;
-    QVector<QVector<double> > angles_matrix(rows, QVector<double>(cols, 0));
+    QVector<QVector<double> > amplitudes(rows, QVector<double>(cols, 0));
     for(unsigned int row = 0; row < rows; row++)
     {
-        for(unsigned int column = 0; column < angles; column++)
+        for(unsigned int column = 0; column < cols; column++)
         {
             Point fixed_proximal = _record->marker(markers.value(column * 4)).point(begin + row);
             Point fixed_distal = _record->marker(markers.value(column * 4 + 1)).point(begin + row);
             Point mobile_proximal = _record->marker(markers.value(column * 4 + 2)).point(begin + row);
             Point mobile_distal = _record->marker(markers.value(column * 4 + 3)).point(begin + row);
-            angles_matrix[row][column] = Angle(Vector(fixed_proximal, fixed_distal), Vector(mobile_proximal, mobile_distal), Angle::XY).amplitude();
+            amplitudes[row][column] = Angle(Vector(fixed_proximal, fixed_distal), Vector(mobile_proximal, mobile_distal), Angle::YZ).amplitude();
         }
     }
-    
-    for(unsigned int i = 0; i < angles_matrix.size();i++)
-    {
-        qDebug() << angles_matrix.value(i);
-    }
-    qDebug() << angles_matrix;
+    qDebug() << "Amplitudes";
+    print(amplitudes);
     
     /*
     Centrer matrice angles
     */
+    QVector<double> means(cols);
+    for(unsigned int col = 0; col < cols; col++)
+    {
+        for(unsigned int row = 0; row < rows; row++)
+        {
+            means[col] += amplitudes[row][col];
+        }
+    }
+    for(unsigned int col = 0; col < cols; col++)
+    {
+        means[col] /= rows;
+    }
+    qDebug() << "Means";
+    qDebug() << means;
+    
+    QVector<QVector<double> > centered(amplitudes);
+    for(unsigned int col = 0; col < cols; col++)
+    {
+        for(unsigned int row = 0; row < rows; row++)
+        {
+            centered[row][col] -= means[col];
+        }
+    }
+    qDebug() << "Centered";
+    print(centered);
     
     /*
     Calculer covariance
     */
+    QVector<QVector<double> > transposed(cols, QVector<double>(rows));
+    for(unsigned int row = 0; row < cols; row++)
+    {
+        for(unsigned int col = 0; col < rows; col++)
+        {
+            transposed[row][col] = centered[col][row];
+        }
+    }
+    qDebug() << "Transposed";
+    print(transposed);
+    
+    QVector<QVector<double> > covariances(cols, QVector<double>(cols, 0));
+    for(unsigned int row = 0; row < cols; row++)
+    {
+        for(unsigned int col = 0; col < cols; col++)
+        {
+            for(unsigned int i = 0; i < rows; i++)
+            {
+                covariances[row][col] += transposed[row][i] * centered[i][col];
+            }
+        }
+    }
+    
+    for(unsigned int row = 0; row < cols; row++)
+    {
+        for(unsigned int col = 0; col < cols; col++)
+        {
+            covariances[row][col] /= cols * 2;
+        }
+    }
+    qDebug() << "Covariance";
+    print(covariances);
     
     /*
     Trouver valeurs et vecteurs propres
     */
     
+    QVector<double> values(cols);
+    QVector<QVector<double> > vectors(cols, QVector<double>(cols));
+    eigen(covariances, values, vectors);
+    qDebug() << "Eigen values";
+    qDebug() << values;
+    qDebug() << "Eigen vectors";
+    print(vectors);
+    
     /*
     Calculer scores
     */
+    QVector<QVector<double> > scores(centered);
+    for(unsigned int row = 0; row < rows; row++)
+    {
+        for(unsigned int col = 0; col < cols; col++)
+        {
+            for(unsigned int i = 0; i < cols; i++)
+            {
+                scores[row][col] += centered[row][i] * vectors[i][col];
+            }
+        }
+    }
+    qDebug() << "Scores";
+    print(scores);
     
     /*
     Exporter
     */
+}
+
+void ACPAnalyzer::print(QVector<QVector<double> > matrix)
+{
+    for(unsigned int i = 0; i < matrix.size();i++)
+    {
+        qDebug() << matrix.value(i);
+    }
+}
+
+void ACPAnalyzer::eigen(QVector<QVector<double> > covariance, QVector<double> & values, QVector<QVector<double> > & vectors)
+{
+    using namespace Eigen;
+    unsigned int size = covariance.size();
+    
+    // Convert covariance into an Eigen matrix
+    MatrixXd matrix = MatrixXd(size, size);
+    for(unsigned int row = 0; row < size; row++)
+    {
+        for(unsigned int col = 0; col < size; col++)
+        {
+            matrix(row,col) = covariance[row][col];
+        }
+    }
+    // Find the eigenvalues & vectors using EigenSolver
+    EigenSolver<MatrixXd> solver(matrix);
+    
+    // Convert results back to 
+    VectorXd eigenValues = VectorXd::Zero(size);
+    eigenValues = solver.eigenvalues().real();
+    for(unsigned int col = 0; col < size; col++)
+    {
+        values[col] = eigenValues[col];
+    }
+
+    MatrixXd eigenVectors = MatrixXd::Zero(size, size);
+    eigenVectors = solver.eigenvectors().real();
+    for(unsigned int row = 0; row < size; row++)
+    {
+        for(unsigned int col = 0; col < size; col++)
+        {
+            vectors[row][col] = eigenVectors(row,col);
+        }
+    }
 }

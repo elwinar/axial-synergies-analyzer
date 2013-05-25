@@ -9,33 +9,310 @@ OBJECTS_DIR = obj
 MOC_DIR = moc
 CONFIG += debug_and_release console
 
-DEPENDPATH  += src src/tools src/utils
-INCLUDEPATH += src src/tools src/utils
-        
-# Input 
-HEADERS += src/tools/parser.h \
+DEPENDPATH += . \
+              src \
+              src\tools \
+              src\utils \
+              src\libs\Eigen\src\Cholesky \
+              src\libs\Eigen\src\CholmodSupport \
+              src\libs\Eigen\src\Core \
+              src\libs\Eigen\src\Eigen2Support \
+              src\libs\Eigen\src\Eigenvalues \
+              src\libs\Eigen\src\Geometry \
+              src\libs\Eigen\src\Householder \
+              src\libs\Eigen\src\IterativeLinearSolvers \
+              src\libs\Eigen\src\Jacobi \
+              src\libs\Eigen\src\LU \
+              src\libs\Eigen\src\misc \
+              src\libs\Eigen\src\OrderingMethods \
+              src\libs\Eigen\src\PardisoSupport \
+              src\libs\Eigen\src\PaStiXSupport \
+              src\libs\Eigen\src\plugins \
+              src\libs\Eigen\src\QR \
+              src\libs\Eigen\src\SparseCholesky \
+              src\libs\Eigen\src\SparseCore \
+              src\libs\Eigen\src\StlSupport \
+              src\libs\Eigen\src\SuperLUSupport \
+              src\libs\Eigen\src\SVD \
+              src\libs\Eigen\src\UmfPackSupport \
+              src\libs\Eigen\src\Core\products \
+              src\libs\Eigen\src\Core\util \
+              src\libs\Eigen\src\Eigen2Support\Geometry \
+              src\libs\Eigen\src\Geometry\arch \
+              src\libs\Eigen\src\LU\arch \
+              src\libs\Eigen\src\Core\arch\AltiVec \
+              src\libs\Eigen\src\Core\arch\Default \
+              src\libs\Eigen\src\Core\arch\NEON \
+              src\libs\Eigen\src\Core\arch\SSE
+INCLUDEPATH += . src\
+
+# Input
+HEADERS += src/tools/acpanalyzer.h \
            src/tools/conditiondetector.h \
-           src/tools/acpanalyzer.h \
+           src/tools/emganalyzer.h \
            src/tools/motiondetector.h \
+           src/tools/parser.h \
            src/utils/analogdata.h \
            src/utils/angle.h \
            src/utils/marker.h \
            src/utils/pi.h \
-           src/utils/trigonometry.h \
            src/utils/point.h \
            src/utils/range.h \
            src/utils/record.h \
-           src/utils/vector.h
+           src/utils/trigonometry.h \
+           src/utils/vector.h \
+           src/libs/Eigen/src/Cholesky/LDLT.h \
+           src/libs/Eigen/src/Cholesky/LLT.h \
+           src/libs/Eigen/src/Cholesky/LLT_MKL.h \
+           src/libs/Eigen/src/CholmodSupport/CholmodSupport.h \
+           src/libs/Eigen/src/Core/Array.h \
+           src/libs/Eigen/src/Core/ArrayBase.h \
+           src/libs/Eigen/src/Core/ArrayWrapper.h \
+           src/libs/Eigen/src/Core/Assign.h \
+           src/libs/Eigen/src/Core/Assign_MKL.h \
+           src/libs/Eigen/src/Core/BandMatrix.h \
+           src/libs/Eigen/src/Core/Block.h \
+           src/libs/Eigen/src/Core/BooleanRedux.h \
+           src/libs/Eigen/src/Core/CommaInitializer.h \
+           src/libs/Eigen/src/Core/CwiseBinaryOp.h \
+           src/libs/Eigen/src/Core/CwiseNullaryOp.h \
+           src/libs/Eigen/src/Core/CwiseUnaryOp.h \
+           src/libs/Eigen/src/Core/CwiseUnaryView.h \
+           src/libs/Eigen/src/Core/DenseBase.h \
+           src/libs/Eigen/src/Core/DenseCoeffsBase.h \
+           src/libs/Eigen/src/Core/DenseStorage.h \
+           src/libs/Eigen/src/Core/Diagonal.h \
+           src/libs/Eigen/src/Core/DiagonalMatrix.h \
+           src/libs/Eigen/src/Core/DiagonalProduct.h \
+           src/libs/Eigen/src/Core/Dot.h \
+           src/libs/Eigen/src/Core/EigenBase.h \
+           src/libs/Eigen/src/Core/Flagged.h \
+           src/libs/Eigen/src/Core/ForceAlignedAccess.h \
+           src/libs/Eigen/src/Core/Functors.h \
+           src/libs/Eigen/src/Core/Fuzzy.h \
+           src/libs/Eigen/src/Core/GeneralProduct.h \
+           src/libs/Eigen/src/Core/GenericPacketMath.h \
+           src/libs/Eigen/src/Core/GlobalFunctions.h \
+           src/libs/Eigen/src/Core/IO.h \
+           src/libs/Eigen/src/Core/Map.h \
+           src/libs/Eigen/src/Core/MapBase.h \
+           src/libs/Eigen/src/Core/MathFunctions.h \
+           src/libs/Eigen/src/Core/Matrix.h \
+           src/libs/Eigen/src/Core/MatrixBase.h \
+           src/libs/Eigen/src/Core/NestByValue.h \
+           src/libs/Eigen/src/Core/NoAlias.h \
+           src/libs/Eigen/src/Core/NumTraits.h \
+           src/libs/Eigen/src/Core/PermutationMatrix.h \
+           src/libs/Eigen/src/Core/PlainObjectBase.h \
+           src/libs/Eigen/src/Core/Product.h \
+           src/libs/Eigen/src/Core/ProductBase.h \
+           src/libs/Eigen/src/Core/Random.h \
+           src/libs/Eigen/src/Core/Redux.h \
+           src/libs/Eigen/src/Core/Replicate.h \
+           src/libs/Eigen/src/Core/ReturnByValue.h \
+           src/libs/Eigen/src/Core/Reverse.h \
+           src/libs/Eigen/src/Core/Select.h \
+           src/libs/Eigen/src/Core/SelfAdjointView.h \
+           src/libs/Eigen/src/Core/SelfCwiseBinaryOp.h \
+           src/libs/Eigen/src/Core/SolveTriangular.h \
+           src/libs/Eigen/src/Core/StableNorm.h \
+           src/libs/Eigen/src/Core/Stride.h \
+           src/libs/Eigen/src/Core/Swap.h \
+           src/libs/Eigen/src/Core/Transpose.h \
+           src/libs/Eigen/src/Core/Transpositions.h \
+           src/libs/Eigen/src/Core/TriangularMatrix.h \
+           src/libs/Eigen/src/Core/VectorBlock.h \
+           src/libs/Eigen/src/Core/VectorwiseOp.h \
+           src/libs/Eigen/src/Core/Visitor.h \
+           src/libs/Eigen/src/Eigen2Support/Block.h \
+           src/libs/Eigen/src/Eigen2Support/Cwise.h \
+           src/libs/Eigen/src/Eigen2Support/CwiseOperators.h \
+           src/libs/Eigen/src/Eigen2Support/Lazy.h \
+           src/libs/Eigen/src/Eigen2Support/LeastSquares.h \
+           src/libs/Eigen/src/Eigen2Support/LU.h \
+           src/libs/Eigen/src/Eigen2Support/Macros.h \
+           src/libs/Eigen/src/Eigen2Support/MathFunctions.h \
+           src/libs/Eigen/src/Eigen2Support/Memory.h \
+           src/libs/Eigen/src/Eigen2Support/Meta.h \
+           src/libs/Eigen/src/Eigen2Support/Minor.h \
+           src/libs/Eigen/src/Eigen2Support/QR.h \
+           src/libs/Eigen/src/Eigen2Support/SVD.h \
+           src/libs/Eigen/src/Eigen2Support/TriangularSolver.h \
+           src/libs/Eigen/src/Eigen2Support/VectorBlock.h \
+           src/libs/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
+           src/libs/Eigen/src/Eigenvalues/ComplexSchur.h \
+           src/libs/Eigen/src/Eigenvalues/ComplexSchur_MKL.h \
+           src/libs/Eigen/src/Eigenvalues/EigenSolver.h \
+           src/libs/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
+           src/libs/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
+           src/libs/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+           src/libs/Eigen/src/Eigenvalues/RealSchur.h \
+           src/libs/Eigen/src/Eigenvalues/RealSchur_MKL.h \
+           src/libs/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
+           src/libs/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h \
+           src/libs/Eigen/src/Eigenvalues/Tridiagonalization.h \
+           src/libs/Eigen/src/Geometry/AlignedBox.h \
+           src/libs/Eigen/src/Geometry/AngleAxis.h \
+           src/libs/Eigen/src/Geometry/EulerAngles.h \
+           src/libs/Eigen/src/Geometry/Homogeneous.h \
+           src/libs/Eigen/src/Geometry/Hyperplane.h \
+           src/libs/Eigen/src/Geometry/OrthoMethods.h \
+           src/libs/Eigen/src/Geometry/ParametrizedLine.h \
+           src/libs/Eigen/src/Geometry/Quaternion.h \
+           src/libs/Eigen/src/Geometry/Rotation2D.h \
+           src/libs/Eigen/src/Geometry/RotationBase.h \
+           src/libs/Eigen/src/Geometry/Scaling.h \
+           src/libs/Eigen/src/Geometry/Transform.h \
+           src/libs/Eigen/src/Geometry/Translation.h \
+           src/libs/Eigen/src/Geometry/Umeyama.h \
+           src/libs/Eigen/src/Householder/BlockHouseholder.h \
+           src/libs/Eigen/src/Householder/Householder.h \
+           src/libs/Eigen/src/Householder/HouseholderSequence.h \
+           src/libs/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h \
+           src/libs/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
+           src/libs/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h \
+           src/libs/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
+           src/libs/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h \
+           src/libs/Eigen/src/Jacobi/Jacobi.h \
+           src/libs/Eigen/src/LU/Determinant.h \
+           src/libs/Eigen/src/LU/FullPivLU.h \
+           src/libs/Eigen/src/LU/Inverse.h \
+           src/libs/Eigen/src/LU/PartialPivLU.h \
+           src/libs/Eigen/src/LU/PartialPivLU_MKL.h \
+           src/libs/Eigen/src/misc/blas.h \
+           src/libs/Eigen/src/misc/Image.h \
+           src/libs/Eigen/src/misc/Kernel.h \
+           src/libs/Eigen/src/misc/Solve.h \
+           src/libs/Eigen/src/misc/SparseSolve.h \
+           src/libs/Eigen/src/OrderingMethods/Amd.h \
+           src/libs/Eigen/src/PardisoSupport/PardisoSupport.h \
+           src/libs/Eigen/src/PaStiXSupport/PaStiXSupport.h \
+           src/libs/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
+           src/libs/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
+           src/libs/Eigen/src/plugins/BlockMethods.h \
+           src/libs/Eigen/src/plugins/CommonCwiseBinaryOps.h \
+           src/libs/Eigen/src/plugins/CommonCwiseUnaryOps.h \
+           src/libs/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
+           src/libs/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
+           src/libs/Eigen/src/QR/ColPivHouseholderQR.h \
+           src/libs/Eigen/src/QR/ColPivHouseholderQR_MKL.h \
+           src/libs/Eigen/src/QR/FullPivHouseholderQR.h \
+           src/libs/Eigen/src/QR/HouseholderQR.h \
+           src/libs/Eigen/src/QR/HouseholderQR_MKL.h \
+           src/libs/Eigen/src/SparseCholesky/SimplicialCholesky.h \
+           src/libs/Eigen/src/SparseCore/AmbiVector.h \
+           src/libs/Eigen/src/SparseCore/CompressedStorage.h \
+           src/libs/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h \
+           src/libs/Eigen/src/SparseCore/CoreIterators.h \
+           src/libs/Eigen/src/SparseCore/MappedSparseMatrix.h \
+           src/libs/Eigen/src/SparseCore/SparseAssign.h \
+           src/libs/Eigen/src/SparseCore/SparseBlock.h \
+           src/libs/Eigen/src/SparseCore/SparseCwiseBinaryOp.h \
+           src/libs/Eigen/src/SparseCore/SparseCwiseUnaryOp.h \
+           src/libs/Eigen/src/SparseCore/SparseDenseProduct.h \
+           src/libs/Eigen/src/SparseCore/SparseDiagonalProduct.h \
+           src/libs/Eigen/src/SparseCore/SparseDot.h \
+           src/libs/Eigen/src/SparseCore/SparseFuzzy.h \
+           src/libs/Eigen/src/SparseCore/SparseMatrix.h \
+           src/libs/Eigen/src/SparseCore/SparseMatrixBase.h \
+           src/libs/Eigen/src/SparseCore/SparsePermutation.h \
+           src/libs/Eigen/src/SparseCore/SparseProduct.h \
+           src/libs/Eigen/src/SparseCore/SparseRedux.h \
+           src/libs/Eigen/src/SparseCore/SparseSelfAdjointView.h \
+           src/libs/Eigen/src/SparseCore/SparseSparseProductWithPruning.h \
+           src/libs/Eigen/src/SparseCore/SparseTranspose.h \
+           src/libs/Eigen/src/SparseCore/SparseTriangularView.h \
+           src/libs/Eigen/src/SparseCore/SparseUtil.h \
+           src/libs/Eigen/src/SparseCore/SparseVector.h \
+           src/libs/Eigen/src/SparseCore/SparseView.h \
+           src/libs/Eigen/src/SparseCore/TriangularSolver.h \
+           src/libs/Eigen/src/StlSupport/details.h \
+           src/libs/Eigen/src/StlSupport/StdDeque.h \
+           src/libs/Eigen/src/StlSupport/StdList.h \
+           src/libs/Eigen/src/StlSupport/StdVector.h \
+           src/libs/Eigen/src/SuperLUSupport/SuperLUSupport.h \
+           src/libs/Eigen/src/SVD/JacobiSVD.h \
+           src/libs/Eigen/src/SVD/JacobiSVD_MKL.h \
+           src/libs/Eigen/src/SVD/UpperBidiagonalization.h \
+           src/libs/Eigen/src/UmfPackSupport/UmfPackSupport.h \
+           src/libs/Eigen/src/Core/products/CoeffBasedProduct.h \
+           src/libs/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
+           src/libs/Eigen/src/Core/products/GeneralMatrixMatrix.h \
+           src/libs/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h \
+           src/libs/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
+           src/libs/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h \
+           src/libs/Eigen/src/Core/products/GeneralMatrixVector.h \
+           src/libs/Eigen/src/Core/products/GeneralMatrixVector_MKL.h \
+           src/libs/Eigen/src/Core/products/Parallelizer.h \
+           src/libs/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
+           src/libs/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h \
+           src/libs/Eigen/src/Core/products/SelfadjointMatrixVector.h \
+           src/libs/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h \
+           src/libs/Eigen/src/Core/products/SelfadjointProduct.h \
+           src/libs/Eigen/src/Core/products/SelfadjointRank2Update.h \
+           src/libs/Eigen/src/Core/products/TriangularMatrixMatrix.h \
+           src/libs/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h \
+           src/libs/Eigen/src/Core/products/TriangularMatrixVector.h \
+           src/libs/Eigen/src/Core/products/TriangularMatrixVector_MKL.h \
+           src/libs/Eigen/src/Core/products/TriangularSolverMatrix.h \
+           src/libs/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h \
+           src/libs/Eigen/src/Core/products/TriangularSolverVector.h \
+           src/libs/Eigen/src/Core/util/BlasUtil.h \
+           src/libs/Eigen/src/Core/util/Constants.h \
+           src/libs/Eigen/src/Core/util/DisableStupidWarnings.h \
+           src/libs/Eigen/src/Core/util/ForwardDeclarations.h \
+           src/libs/Eigen/src/Core/util/Macros.h \
+           src/libs/Eigen/src/Core/util/Memory.h \
+           src/libs/Eigen/src/Core/util/Meta.h \
+           src/libs/Eigen/src/Core/util/MKL_support.h \
+           src/libs/Eigen/src/Core/util/NonMPL2.h \
+           src/libs/Eigen/src/Core/util/ReenableStupidWarnings.h \
+           src/libs/Eigen/src/Core/util/StaticAssert.h \
+           src/libs/Eigen/src/Core/util/XprHelper.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/AlignedBox.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/All.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/AngleAxis.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/Hyperplane.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/Quaternion.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/Rotation2D.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/RotationBase.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/Scaling.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/Transform.h \
+           src/libs/Eigen/src/Eigen2Support/Geometry/Translation.h \
+           src/libs/Eigen/src/Geometry/arch/Geometry_SSE.h \
+           src/libs/Eigen/src/LU/arch/Inverse_SSE.h \
+           src/libs/Eigen/src/Core/arch/AltiVec/Complex.h \
+           src/libs/Eigen/src/Core/arch/AltiVec/PacketMath.h \
+           src/libs/Eigen/src/Core/arch/Default/Settings.h \
+           src/libs/Eigen/src/Core/arch/NEON/Complex.h \
+           src/libs/Eigen/src/Core/arch/NEON/PacketMath.h \
+           src/libs/Eigen/src/Core/arch/SSE/Complex.h \
+           src/libs/Eigen/src/Core/arch/SSE/MathFunctions.h \
+           src/libs/Eigen/src/Core/arch/SSE/PacketMath.h \
+           src/libs/Eigen/Core \
+           src/libs/Eigen/Eigen2Support \
+           src/libs/Eigen/Eigen \
+           src/libs/Eigen/Dense \
+           src/libs/Eigen/LU \
+           src/libs/Eigen/Cholesky \
+           src/libs/Eigen/QR \
+           src/libs/Eigen/Jacobi \
+           src/libs/Eigen/Householder \
+           src/libs/Eigen/Eigenvalues \
+           src/libs/Eigen/Geometry \
+           src/libs/Eigen/SVD
 SOURCES += src/main.cpp \
-           src/tools/parser.cpp \
-           src/tools/conditiondetector.cpp \
            src/tools/acpanalyzer.cpp \
+           src/tools/conditiondetector.cpp \
+           src/tools/emganalyzer.cpp \
            src/tools/motiondetector.cpp \
+           src/tools/parser.cpp \
            src/utils/analogdata.cpp \
            src/utils/angle.cpp \
            src/utils/marker.cpp \
-           src/utils/trigonometry.cpp \
            src/utils/point.cpp \
            src/utils/range.cpp \
            src/utils/record.cpp \
+           src/utils/trigonometry.cpp \
            src/utils/vector.cpp

@@ -124,16 +124,12 @@ double Angle::amplitude() const
 		
 	/*
 	 * convert the amplitude from radians to degrees and return it
-	 * the degrees are "oriented" and values are contained in a [-180; 180] interval;
+	 * values are contained in a [0; 360] interval;
 	 */
 	 
-	if(amplitude <= -PI)
+	if(amplitude < 0)
 	{
-		amplitude+= 2*PI;
-	}
-	if(amplitude > PI)
-	{
-		amplitude-= 2*PI;
+		amplitude += 2*PI;
 	}
 	return amplitude / PI * 180;
 }

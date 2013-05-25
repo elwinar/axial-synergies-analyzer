@@ -13,6 +13,8 @@ public:
     }
     
     void run(unsigned int begin, unsigned int end, QTextStream & out);
+    void print(QVector<QVector<double> > matrix);
+    void eigen(QVector<QVector<double> > covariance, QVector<double> & values, QVector<QVector<double> > & vectors);
     
 private:
     Record * _record;
