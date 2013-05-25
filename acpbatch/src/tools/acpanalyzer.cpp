@@ -289,7 +289,7 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     qDebug() << totals;
     
     /*
-    Exporter
+    Exporter les valeurs et vecteurs
     */
     for(unsigned int i = 0; i < cols; i++)
     {
@@ -299,6 +299,15 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
             out << "," << vectors[j][i];
         }
     }
+    out << "\n";
+    
+    /*
+    Exporter les scores dans un fichier à part
+    */
+    QString dir =  QCoreApplication::applicationDirPath();
+    QFile scoresfile(dir + "\\" + _record.name() + "-scores.csv");
+    scoresfile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+    QTextStream scoresstream(&scoresfile);
 }
 
 void ACPAnalyzer::print(QVector<QVector<double> > matrix)
