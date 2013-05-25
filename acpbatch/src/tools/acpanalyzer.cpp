@@ -6,6 +6,7 @@
 #include "utils/marker.h"
 #include "utils/vector.h"
 #include "utils/point.h"
+#include <QFile>
 
 #include <libs/Eigen/Core>
 #include <libs/Eigen/Eigen>
@@ -37,6 +38,12 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     end += offset;
     out << "," << begin
         << "," << end;
+        
+    /*
+    Fix frequency variations
+    */
+    begin *= (double) _record->frequencyMarkers() / (double) 100;
+    end *= (double) _record->frequencyMarkers() / (double) 100;
     
     /*
     Choisir jeu d'angles
@@ -304,10 +311,26 @@ void ACPAnalyzer::run(unsigned int begin, unsigned int end, QTextStream & out)
     /*
     Exporter les scores dans un fichier à part
     */
-    QString dir =  QCoreApplication::applicationDirPath();
-    QFile scoresfile(dir + "\\" + _record.name() + "-scores.csv");
+    QString dir = QCoreApplication::applicationDirPath();
+    QFile scoresfile(dir + "\\" + _record->name() + "-scores.csv");
     scoresfile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
     QTextStream scoresstream(&scoresfile);
+    scoresstream << "time";
+    for(unsigned int col = 1; col <= cols; col++)
+    {
+        scoresstream << ",PC" << col;
+    }
+    scoresstream << "\n";
+    for(unsigned int row = 0; row < rows; row++)
+    {
+        scoresstream << (begin + row);
+        for(unsigned int col = 0; col < cols; col++)
+        {
+            scoresstream << "," << scores[row][col];
+        }
+        scoresstream << "\n";
+    }
+    scoresfile.close();
 }
 
 void ACPAnalyzer::print(QVector<QVector<double> > matrix)

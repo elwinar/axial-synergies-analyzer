@@ -42,6 +42,27 @@ unsigned int Record::durationAnalogdatas() const
 {
     return _analogdatasDuration;
 }
+    
+unsigned int Record::frequencyMarkers() const
+{
+    return _markersFrequency;
+}
+
+void Record::setMarkersFrequency(unsigned int frequency)
+{
+    _markersFrequency = frequency;
+}
+
+unsigned int Record::frequencyAnalogdatas() const
+{
+    return _analogdatasFrequency;
+}
+
+void Record::setAnalogdatasFrequency(unsigned int frequency)
+{
+    _analogdatasFrequency = frequency;
+}
+
 
 QString Record::filename() const
 {

@@ -45,7 +45,9 @@ Record * Parser::parse(QFile * file)
     /*
      * skip the frequency of capture
      */
-    stream.readLine();
+    buffer = stream.readLine();
+    QStringList frequencyLine = buffer.split('.');
+    record->setMarkersFrequency(frequencyLine[0].toUInt());
     
     /*
      * read one line
@@ -123,7 +125,9 @@ Record * Parser::parse(QFile * file)
     /*
      * skip the frequency of capture
      */
-    stream.readLine();
+    buffer = stream.readLine();
+    frequencyLine = buffer.split('.');
+    record->setAnalogdatasFrequency(frequencyLine[0].toUInt());
     
     /*
      * read one line

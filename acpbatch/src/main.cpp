@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
             {
                 qDebug() << "Analyzing" << fields[FILE];
                 Record * record = Parser::parse(&rfile);
+                qDebug() << "Frequency" << record->frequencyMarkers();
                 
                 acpstream << fields[FILE];
                 ACPAnalyzer acp(record);

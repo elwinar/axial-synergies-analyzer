@@ -42,6 +42,9 @@ public:
     unsigned int durationMarkers() const;
     unsigned int durationAnalogdatas() const;
     
+    unsigned int frequencyMarkers() const;
+    unsigned int frequencyAnalogdatas() const;
+    
     /**
      * The physical filename of the record
      */
@@ -68,7 +71,9 @@ public:
      * Set the duration of the record
      */
     void setMarkersDuration(unsigned int duration);
+    void setMarkersFrequency(unsigned int frequency);
     void setAnalogdatasDuration(unsigned int duration);
+    void setAnalogdatasFrequency(unsigned int frequency);
     
     /**
      * Set the filename of the record
@@ -95,6 +100,8 @@ protected:
 private:
     unsigned int _markersDuration;
     unsigned int _analogdatasDuration;
+    unsigned int _markersFrequency;
+    unsigned int _analogdatasFrequency;
     QString _filename;
     QMap<QString, Marker> _markers;
     QString _name;
