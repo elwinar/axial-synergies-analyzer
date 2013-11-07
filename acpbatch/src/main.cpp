@@ -48,23 +48,10 @@ int main(int argc, char* argv[])
         acpfile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
         QTextStream acpstream(&acpfile);
         unsigned int angles = settings.value("angles", 0).toUInt();
-        acpstream << "filename"
-            << "," << "T Begin"
-            << "," << "T End";
-        for(unsigned int i = 1; i <= angles; i++)
-        {
-            acpstream << ",PC" << i;
-            for(unsigned int j = 1; j <= angles; j++)
-            {
-                acpstream << ",R" << i << j;
-            }
-        }
-        acpstream << "\n";
         
-        motionstream.readLine();
         while(!motionstream.atEnd())
         {
-            QString buffer = motionstream.readLine();
+			QString buffer = motionstream.readLine();
             QStringList fields = buffer.split(',');
             QFile rfile(fields[FILE]);
             

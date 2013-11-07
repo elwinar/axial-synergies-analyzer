@@ -98,7 +98,7 @@ void MotionDetectorWidget::save()
 {
     if(_motionDetector.detected())
     {
-        QFile file("save.csv");
+        QFile file("motion-result.csv");
         file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
         QTextStream out(&file);
         
@@ -119,6 +119,8 @@ void MotionDetectorWidget::save()
         double endSpeed = _motionDetector.speeds().value(_endSpinBox->value());
         
         out << _record->filename() << "," 
+            << _angleSelector->fixed().first << ","
+            << _angleSelector->fixed().second << "," 
             << _angleSelector->mobile().first << ","
             << _angleSelector->mobile().second << "," 
             << duration << ","

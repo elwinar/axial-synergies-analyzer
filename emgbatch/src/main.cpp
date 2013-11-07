@@ -45,43 +45,10 @@ int main(int argc, char* argv[])
         QFile emgfile(dir + "\\emg-result.csv");
         emgfile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
         QTextStream emgstream(&emgfile);
-        emgstream << "filename"
-            << "," << "TS start"
-            << "," << "TS stop"
-            << "," << "T1 start"
-            << "," << "T1 stop"
-            << "," << "T2 start"
-            << "," << "T2 stop"
-            << "," << "ZW1 TS"
-            << "," << "ZW1 T1"
-            << "," << "ZW1 T2"
-            << "," << "ZW2 TS"
-            << "," << "ZW2 T1"
-            << "," << "ZW2 T2"
-            << "," << "ZW3 TS"
-            << "," << "ZW3 T1"
-            << "," << "ZW3 T2"
-            << "," << "ZW4 TS"
-            << "," << "ZW4 T1"
-            << "," << "ZW4 T2"
-            << "," << "ZW5 TS"
-            << "," << "ZW5 T1"
-            << "," << "ZW5 T2"
-            << "," << "ZW6 TS"
-            << "," << "ZW6 T1"
-            << "," << "ZW6 T2"
-            << "," << "ZW7 TS"
-            << "," << "ZW7 T1"
-            << "," << "ZW7 T2"
-            << "," << "ZW8 TS"
-            << "," << "ZW8 T1"
-            << "," << "ZW8 T2"
-            << "\n";
         
-        motionstream.readLine();
         while(!motionstream.atEnd())
         {
-            QString buffer = motionstream.readLine();
+			QString buffer = motionstream.readLine();
             QStringList fields = buffer.split(',');
             QFile rfile(fields[FILE]);
             
