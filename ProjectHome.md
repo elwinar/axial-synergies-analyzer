@@ -1,0 +1,1 @@
+This project aims to provide a tool for researchers of the university of Paris 10 using the VICON motion capture systems to study the body axial synergies.
